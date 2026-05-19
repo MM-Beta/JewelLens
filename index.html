@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JewelLens — Every piece has a story.</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --surface: #fdfaf5;
+  --surface2: #ede8df;
+  --border: #d8d0c4;
+  --border2: #c4bab0;
+  --gold: #c9983c;
+  --gold-light: #e0b050;
+  --gold-dark: #a87c28;
+  --gold-dim: rgba(201,152,60,0.12);
+  --text: #1e1a16;
+  --text2: #5c4d3a;
+  --text3: #9a8870;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-full: 999px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: var(--font-body); color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding-bottom: 80px; }
+.app { width: 100%; max-width: 420px; padding: 0 20px; }
+.hidden { display: none !important; }
+.spacer { height: 16px; }
+.section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--text3); margin-bottom: 10px; text-transform: uppercase; }
+.gold-word { color: var(--gold); }
+
+/* ── HERO ── */
+.hero { text-align: center; padding: 48px 0 24px; position: relative; }
+.hero-logo { display: flex; align-items: center; justify-content: center; gap: 9px; margin-bottom: 14px; }
+.logo-jewel { font-family: var(--font-display); font-size: 40px; font-weight: 500; color: var(--text); letter-spacing: .01em; line-height: 1; }
+.logo-lens { font-family: var(--font-display); font-size: 40px; font-weight: 500; color: var(--gold); letter-spacing: .01em; line-height: 1; }
+.hero-eyebrow { font-size: 10px; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; font-weight: 500; margin-bottom: 18px; text-align: center; }
+.hero-headline { font-family: var(--font-display); font-size: 46px; line-height: 1.1; color: var(--text); font-weight: 400; font-style: italic; margin-bottom: 14px; white-space: nowrap; }
+.hero-headline .story-word { font-style: italic; color: var(--gold); }
+.hero-sub { font-size: 13px; color: var(--text2); line-height: 1.7; max-width: 300px; margin: 0 auto 20px; font-weight: 300; }
+.hero-divider { width: 36px; height: 1px; background: var(--border2); margin: 0 auto 24px; }
+.settings-btn { position: absolute; top: 50px; right: 0; background: none; border: 1px solid var(--border2); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text3); transition: all .2s; }
+.settings-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* Settings panel */
+.settings-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+.settings-panel.open { display: block; }
+.settings-label { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.key-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 12px; font-family: monospace; color: var(--text); transition: border-color .2s; margin-bottom: 8px; }
+.key-input:focus { outline: none; border-color: var(--gold); }
+.key-footer { font-size: 11px; color: var(--text3); line-height: 1.5; margin-top: 8px; }
+.key-footer a { color: var(--gold); }
+.key-warning { font-size: 11px; color: var(--text3); background: var(--surface2); border-radius: var(--radius-sm); padding: 8px 10px; margin-top: 8px; line-height: 1.5; border-left: 2px solid var(--border2); }
+.key-btn-row { display: flex; gap: 8px; margin-top: 10px; }
+.key-save-btn { flex: 1; padding: 9px; border-radius: var(--radius-sm); background: var(--gold); color: #fff; border: none; font-family: var(--font-body); font-size: 12px; font-weight: 500; cursor: pointer; transition: opacity .2s; }
+.key-save-btn:hover { opacity: .85; }
+.key-clear-btn { padding: 9px 14px; border-radius: var(--radius-sm); background: none; color: var(--text3); border: 1px solid var(--border); font-family: var(--font-body); font-size: 12px; cursor: pointer; transition: all .2s; }
+.key-clear-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+.key-status { font-size: 11px; color: #27ae60; margin-top: 6px; min-height: 16px; }
+
+/* Usage */
+.usage-bar { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+.usage-dots { display: flex; gap: 4px; }
+.usage-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); transition: background .3s; }
+.usage-dot.used { background: var(--gold); }
+.usage-text { font-size: 11px; color: var(--text3); }
+.usage-text span { color: var(--gold); font-weight: 500; }
+
+/* Upload */
+.upload-zone { border: 1px dashed var(--border2); border-radius: var(--radius); padding: 28px 20px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; background: var(--surface); }
+.upload-zone:hover { border-color: var(--gold); background: var(--surface2); }
+.upload-zone.has-file { border-style: solid; border-color: var(--gold); }
+.upload-icon { width: 44px; height: 44px; margin: 0 auto 10px; border-radius: var(--radius-sm); background: var(--surface2); display: flex; align-items: center; justify-content: center; }
+.upload-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
+.upload-sub { font-size: 12px; color: var(--text2); }
+.upload-hint { font-size: 11px; color: var(--text3); text-align: center; margin-top: 8px; line-height: 1.5; }
+.file-ready { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.file-name-chip { font-size: 11px; color: var(--text2); background: var(--surface2); border-radius: var(--radius-sm); padding: 4px 12px; max-width: 230px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Chips */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { padding: 7px 13px; border-radius: var(--radius-full); font-size: 12px; cursor: pointer; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); transition: all .15s; user-select: none; }
+.chip:hover:not(.selected) { border-color: var(--gold); color: var(--text); }
+.chip.selected { background: var(--gold); color: #fff; border-color: var(--gold); font-weight: 500; }
+
+/* CTA */
+.analyse-btn { width: 100%; padding: 14px; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #fff; transition: opacity .2s, transform .1s; }
+.analyse-btn:not(:disabled):hover { opacity: .9; transform: translateY(-1px); }
+.analyse-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+/* Error */
+.err-box { background: rgba(192,57,43,.08); border: 1px solid rgba(192,57,43,.25); border-radius: var(--radius); padding: 13px 16px; }
+.err-title { font-size: 13px; font-weight: 500; color: #e74c3c; margin-bottom: 4px; }
+.err-body { font-size: 12px; color: #c0392b; line-height: 1.55; }
+
+/* Paywall */
+.paywall-box { background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius); padding: 28px 22px; text-align: center; margin-top: 40px; }
+.paywall-gem { font-size: 40px; margin-bottom: 14px; }
+.paywall-title { font-family: var(--font-display); font-size: 26px; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
+.paywall-sub { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 22px; }
+.paywall-price { font-family: var(--font-display); font-size: 42px; color: var(--gold); margin-bottom: 4px; }
+.paywall-period { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+.paywall-btn { width: 100%; padding: 13px; border-radius: var(--radius); background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #fff; font-size: 14px; font-weight: 500; border: none; cursor: pointer; font-family: var(--font-body); transition: opacity .2s; }
+.paywall-btn:hover { opacity: .88; }
+.perk { font-size: 13px; color: var(--text2); text-align: left; padding: 6px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
+.perk:last-child { border-bottom: none; }
+
+/* Analyzing */
+.spinner { width: 44px; height: 44px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.analyzing-title { font-family: var(--font-display); font-size: 26px; color: var(--text); margin-bottom: 8px; }
+.analyzing-sub { font-size: 13px; color: var(--text3); }
+.progress-log { margin-top: 28px; text-align: left; max-width: 280px; margin-left: auto; margin-right: auto; }
+.progress-log p { font-size: 12px; color: var(--text3); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.5; animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* Results */
+.back-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text3); font-size: 12px; cursor: pointer; font-family: var(--font-body); padding: 0; margin-bottom: 14px; }
+.back-btn:hover { color: var(--gold); }
+.img-wrap { position: relative; margin-bottom: 16px; }
+.preview { width: 100%; max-height: 280px; object-fit: cover; border-radius: var(--radius); display: block; }
+.badge-cat { position: absolute; top: 10px; left: 10px; background: rgba(26,22,16,.65); color: #fff; font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; padding: 4px 10px; border-radius: var(--radius-full); backdrop-filter: blur(4px); }
+.badge-type { position: absolute; bottom: 10px; left: 10px; background: rgba(201,152,60,.85); color: #fff; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: var(--radius-full); backdrop-filter: blur(4px); }
+.save-btn { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; background: rgba(253,250,245,.85); border: 1px solid rgba(201,152,60,.4); cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: all .2s; }
+.save-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
+.tabs-bar { display: flex; gap: 4px; background: var(--surface2); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 16px; }
+.tab-btn { flex: 1; padding: 7px 4px; border-radius: 6px; border: none; background: none; font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--text3); cursor: pointer; transition: all .2s; }
+.tab-btn.active { background: var(--surface); color: var(--gold); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.summary { font-family: var(--font-display); font-size: 17px; line-height: 1.65; color: var(--text2); margin-bottom: 14px; font-style: italic; }
+.detail-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
+.p-row { display: flex; align-items: baseline; gap: 8px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+.p-row:last-child { border-bottom: none; }
+.p-label { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); min-width: 90px; flex-shrink: 0; }
+.p-val { font-size: 13px; color: var(--text); line-height: 1.5; }
+.tier-pill { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .06em; padding: 2px 8px; border-radius: var(--radius-full); text-transform: uppercase; }
+.tier-fashion { background: rgba(90,110,140,.12); color: #3a5070; }
+.tier-fine { background: rgba(201,152,60,.15); color: #8b6010; }
+.tier-luxury { background: rgba(140,80,180,.12); color: #7a3090; }
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tag { font-size: 11px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 4px 12px; }
+.redflag-box { background: rgba(192,57,43,.07); border: 1px solid rgba(192,57,43,.2); border-radius: var(--radius); padding: 13px 16px; margin-bottom: 14px; }
+.redflag-label { font-size: 11px; font-weight: 600; color: #e74c3c; margin-bottom: 6px; letter-spacing: .06em; text-transform: uppercase; }
+.redflag-text { font-size: 12px; color: #c0392b; line-height: 1.6; }
+.care-box { background: var(--gold-dim); border: 1px solid rgba(201,152,60,.25); border-radius: var(--radius); padding: 13px 16px; margin-bottom: 14px; }
+.care-label { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 6px; }
+.care-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.style-intro, .find-intro { font-size: 13px; color: var(--text3); margin-bottom: 14px; }
+.style-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; }
+.style-occasion { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 4px; }
+.style-title { font-family: var(--font-display); font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.style-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.find-link { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; text-decoration: none; color: var(--text); transition: border-color .15s; }
+.find-link:hover { border-color: var(--gold); background: var(--surface2); }
+.find-link-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.find-link-sub { font-size: 11px; color: var(--text3); }
+
+/* Look for Less */
+.look-less-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: none; font-family: var(--font-body); font-size: 12px; color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .2s; margin-bottom: 10px; }
+.look-less-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.look-less-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px; }
+.look-less-title { font-family: var(--font-display); font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.look-less-sub { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+.alt-section { margin-bottom: 10px; }
+.alt-label { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 6px; }
+.alt-item { font-size: 13px; color: var(--text2); padding: 4px 0; line-height: 1.5; }
+
+/* Privacy note */
+.privacy-note { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+/* Verify */
+.verify-disclaimer { background: rgba(192,57,43,.06); border: 1px solid rgba(192,57,43,.18); border-radius: var(--radius); padding: 13px 16px; margin-bottom: 16px; }
+.verify-disclaimer-title { font-size: 12px; font-weight: 600; color: #e74c3c; margin-bottom: 6px; }
+.verify-disclaimer-text { font-size: 12px; color: #c0392b; line-height: 1.6; }
+.verify-input-label { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.verify-textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 14px; font-family: var(--font-body); font-size: 13px; color: var(--text); line-height: 1.6; resize: vertical; transition: border-color .2s; margin-bottom: 10px; }
+.verify-textarea:focus { outline: none; border-color: var(--gold); }
+.verify-btn { width: 100%; padding: 12px; border-radius: var(--radius); background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #fff; border: none; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity .2s; }
+.verify-btn:disabled { opacity: .4; cursor: not-allowed; }
+.verify-results { margin-top: 16px; }
+.claim-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; }
+.claim-row-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.claim-badge { font-size: 10px; font-weight: 600; letter-spacing: .06em; padding: 3px 10px; border-radius: var(--radius-full); text-transform: uppercase; flex-shrink: 0; }
+.badge-supported { background: rgba(39,174,96,.12); color: #27ae60; }
+.badge-questionable { background: rgba(241,196,15,.15); color: #b8860b; }
+.badge-not-supported { background: rgba(192,57,43,.1); color: #e74c3c; }
+.claim-text { font-size: 12px; font-weight: 500; color: var(--text); }
+.claim-evidence { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.verify-verdict { background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius); padding: 18px; margin-top: 14px; }
+.verify-verdict-title { font-family: var(--font-display); font-size: 20px; color: var(--gold); margin-bottom: 10px; }
+.verify-verdict-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.verify-questions { margin-top: 14px; }
+.verify-q-label { font-size: 10px; font-weight: 500; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.verify-q-item { font-size: 13px; color: var(--text2); padding: 7px 0; border-bottom: 1px solid var(--border); line-height: 1.55; }
+.verify-q-item:last-child { border-bottom: none; }
+.verify-bottom-disclaimer { background: var(--surface2); border-radius: var(--radius); padding: 14px 18px; margin-top: 16px; font-size: 12px; color: var(--text3); line-height: 1.6; text-align: center; }
+.verify-bottom-disclaimer strong { color: var(--gold); }
+
+/* Bottom nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 2px solid var(--border); display: flex; z-index: 100; }
+.nav-btn { flex: 1; padding: 11px 4px 13px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; border-top: 2px solid transparent; margin-top: -2px; cursor: pointer; font-family: var(--font-body); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); transition: color .2s, border-color .2s; }
+.nav-btn.active { color: var(--gold); border-top-color: var(--gold); }
+.nav-btn svg { display: block; }
+
+/* Section hero shared */
+.screen-hero { text-align: center; padding: 36px 0 20px; }
+.screen-title { font-family: var(--font-display); font-size: 30px; color: var(--text); margin-bottom: 6px; line-height: 1.2; }
+.screen-title .gold-word { color: var(--gold); }
+.screen-sub { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.screen-star { color: var(--gold); font-size: 18px; margin-right: 6px; }
+
+/* Daily Stone */
+.ds-date-bar { text-align: center; margin-bottom: 20px; }
+.ds-date { font-size: 11px; color: var(--text3); letter-spacing: .12em; text-transform: uppercase; }
+.ds-sign-picker { display: none; }
+.ds-sign-picker.visible { display: block; }
+.zodiac-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+.zodiac-chip { padding: 12px 6px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); text-align: center; cursor: pointer; transition: all .15s; }
+.zodiac-chip:hover { border-color: var(--gold); background: var(--gold-dim); }
+.zodiac-chip.selected { border-color: var(--gold); background: var(--gold-dim); }
+.zodiac-emoji { font-size: 18px; display: block; margin-bottom: 4px; }
+.zodiac-name { font-size: 10px; color: var(--text2); font-weight: 500; }
+.ds-btn { width: 100%; padding: 14px; border-radius: var(--radius); background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #fff; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity .2s; }
+.ds-btn:disabled { opacity: .35; cursor: not-allowed; }
+.ds-card { background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius); padding: 24px; text-align: center; margin-bottom: 14px; }
+.ds-stone-circle { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+.ds-stone-name { font-family: var(--font-display); font-size: 32px; color: var(--gold); margin-bottom: 4px; }
+.ds-stone-meta { font-size: 11px; color: var(--text3); margin-bottom: 14px; letter-spacing: .06em; text-transform: uppercase; }
+.ds-stone-why { font-family: var(--font-display); font-size: 15px; color: var(--text2); line-height: 1.7; font-style: italic; }
+.ds-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; }
+.ds-section-label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; font-weight: 500; }
+.ds-section-text { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.ds-affirmation { text-align: center; padding: 20px 0 8px; font-family: var(--font-display); font-size: 18px; font-style: italic; color: var(--text3); line-height: 1.5; }
+.ds-change-btn { width: 100%; padding: 10px; border-radius: var(--radius-sm); background: none; border: 1px solid var(--border2); color: var(--text3); font-size: 12px; cursor: pointer; font-family: var(--font-body); margin-top: 6px; }
+.ds-change-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Compare */
+.compare-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.compare-slot { border: 1px dashed var(--border2); border-radius: var(--radius); padding: 16px 10px; text-align: center; cursor: pointer; background: var(--surface); transition: all .2s; min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.compare-slot:hover { border-color: var(--gold); background: var(--surface2); }
+.compare-slot.has-img { border-style: solid; border-color: var(--gold); padding: 0; overflow: hidden; }
+.compare-slot img { width: 100%; height: 130px; object-fit: cover; border-radius: calc(var(--radius) - 1px); display: block; }
+.compare-slot-label { font-size: 11px; color: var(--text3); font-weight: 500; }
+.compare-slot-hint { font-size: 10px; color: var(--text3); }
+.compare-type-row { display: flex; gap: 8px; margin-bottom: 6px; }
+.compare-type-select { flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 12px; color: var(--text); background: var(--surface); cursor: pointer; }
+.compare-type-select:focus { outline: none; border-color: var(--gold); }
+.compare-btn { width: 100%; padding: 14px; border-radius: var(--radius); background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #fff; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity .2s; }
+.compare-btn:disabled { opacity: .35; cursor: not-allowed; }
+.compare-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.compare-col-img { width: 100%; height: 100px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); display: block; margin-bottom: 8px; }
+.compare-col-title { font-family: var(--font-display); font-size: 14px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+.compare-col-meta { font-size: 11px; color: var(--text3); line-height: 1.5; }
+.compare-verdict { background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius); padding: 18px; }
+.compare-verdict-title { font-family: var(--font-display); font-size: 20px; color: var(--gold); margin-bottom: 10px; }
+.compare-verdict-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+/* Saved screen */
+.saved-hero { padding: 36px 0 16px; }
+.saved-title { font-family: var(--font-display); font-size: 28px; color: var(--text); margin-bottom: 4px; }
+.saved-sub { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+.collection-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.collection-tab { padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--surface); font-size: 12px; color: var(--text2); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.collection-tab.active { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 500; }
+.saved-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.saved-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: border-color .15s; }
+.saved-card:hover { border-color: var(--gold); }
+.saved-card-img { width: 100%; height: 110px; object-fit: cover; display: block; background: var(--surface2); }
+.saved-card-img-placeholder { width: 100%; height: 110px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.saved-card-body { padding: 10px; }
+.saved-card-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.saved-card-meta { font-size: 10px; color: var(--text3); }
+.saved-empty { text-align: center; padding: 60px 0; color: var(--text3); }
+.saved-empty-icon { font-size: 40px; margin-bottom: 12px; }
+.saved-empty-text { font-size: 14px; line-height: 1.6; }
+
+@media (max-width: 460px) { .app { padding: 0 16px; } }
+
+/* Rating + feedback */
+.rating-row { display: flex; align-items: center; gap: 10px; padding: 14px 0 4px; border-top: 1px solid var(--border); margin-top: 16px; }
+.rating-label { font-size: 12px; color: var(--text3); flex: 1; }
+.rate-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.rate-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
+.rate-btn.rated { border-color: var(--gold); background: var(--gold-dim); }
+.feedback-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: none; font-family: var(--font-body); font-size: 12px; color: var(--text3); cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .2s; }
+.feedback-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* Confidence score */
+.confidence-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 14px; }
+.confidence-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.confidence-label { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); }
+.confidence-pct { font-size: 15px; font-weight: 600; color: var(--gold); }
+.confidence-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+.confidence-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold)); border-radius: 2px; transition: width .6s ease; }
+.confidence-note { font-size: 11px; color: var(--text3); line-height: 1.5; }
+
+/* Next steps */
+.next-steps { margin-bottom: 14px; }
+.next-steps-title { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.next-step-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 6px; text-decoration: none; color: var(--text); transition: border-color .15px; }
+.next-step-link:hover { border-color: var(--gold); background: var(--surface2); }
+.next-step-name { font-size: 13px; font-weight: 500; display: block; margin-bottom: 2px; }
+.next-step-sub { font-size: 11px; color: var(--text3); display: block; }
+
+/* Save modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,16,.5); z-index: 200; align-items: flex-end; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-sheet { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px; width: 100%; max-width: 420px; animation: slideUp .25s ease; }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 16px; }
+.modal-title { font-family: var(--font-display); font-size: 20px; color: var(--text); margin-bottom: 14px; }
+.collection-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-height: 240px; overflow-y: auto; }
+.collection-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); cursor: pointer; transition: border-color .15s; }
+.collection-item:hover { border-color: var(--gold); }
+.collection-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.collection-name { font-size: 14px; color: var(--text); flex: 1; }
+.collection-count { font-size: 11px; color: var(--text3); }
+.new-collection-row { display: flex; gap: 8px; }
+.new-collection-input { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13px; color: var(--text); background: var(--bg); }
+.new-collection-input:focus { outline: none; border-color: var(--gold); }
+.new-collection-btn { padding: 9px 14px; background: var(--gold-dim); border: 1px solid var(--gold); border-radius: var(--radius-sm); color: var(--gold); font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: var(--font-body); }
+
+/* Download / Share buttons */
+.copy-summary-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: none; font-family: var(--font-body); font-size: 12px; color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .2s; margin-bottom: 8px; }
+.copy-summary-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.copy-summary-btn.copied { border-color: #27ae60; color: #27ae60; background: rgba(39,174,96,.08); }
+.share-card-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1px solid var(--gold); background: var(--gold-dim); font-family: var(--font-body); font-size: 12px; color: var(--gold); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .2s; margin-bottom: 8px; font-weight: 500; }
+.share-card-btn:hover { background: rgba(201,152,60,.2); }
+.share-card-btn.generating { opacity: .6; cursor: wait; }
+
+/* Onboarding modal */
+.onboard-overlay { display: none; position: fixed; inset: 0; background: rgba(26,22,16,.65); z-index: 600; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px); }
+.onboard-overlay.open { display: flex; }
+.onboard-sheet { background: var(--surface); border-radius: 24px 24px 0 0; padding: 30px 24px 44px; width: 100%; max-width: 420px; animation: slideUp .3s ease; }
+.onboard-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.onboard-logo-text { font-family: var(--font-display); font-size: 34px; font-weight: 500; line-height: 1; }
+.onboard-tagline { font-family: var(--font-display); font-size: 22px; color: var(--text); margin-bottom: 8px; font-style: italic; }
+.onboard-sub { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 24px; }
+.onboard-features { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.onboard-feature { display: flex; gap: 14px; align-items: flex-start; }
+.onboard-feat-icon { width: 38px; height: 38px; background: var(--gold-dim); border: 1px solid rgba(201,152,60,.25); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.onboard-feat-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.onboard-feat-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
+.onboard-free-note { text-align: center; font-size: 12px; color: var(--gold); margin-bottom: 18px; font-weight: 500; background: var(--gold-dim); border: 1px solid rgba(201,152,60,.2); border-radius: var(--radius-sm); padding: 10px; }
+.onboard-btn { width: 100%; padding: 15px; border-radius: var(--radius); background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #fff; border: none; font-family: var(--font-body); font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity .2s; }
+.onboard-btn:hover { opacity: .9; }
+
+/* Hero logo cursor */
+.hero-logo { cursor: default; }
+.hero-logo-icon { transition: transform .3s; }
+.hero-logo:active .hero-logo-icon { transform: scale(1.15); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- UPLOAD -->
+<div id="sc-upload">
+  <div class="hero">
+    <button class="settings-btn" id="settings-btn" onclick="toggleSettings()" style="display:none" title="API Key Settings">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <div class="hero-logo" onclick="handleLogoTap()">
+      <svg class="hero-logo-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c9983c" stroke-width="1.2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="5"/>
+        <circle cx="12" cy="12" r="1.2" fill="#c9983c" stroke="none"/>
+      </svg>
+      <span><span class="logo-jewel">Jewel</span><span class="logo-lens">Lens</span></span>
+    </div>
+    <p class="hero-eyebrow">AI Jewellery Intelligence</p>
+    <h1 class="hero-headline">Every piece has a <span class="story-word">story.</span></h1>
+    <p class="hero-sub">Upload any jewellery photo and discover its metal, stones, style era — and exactly how to wear it.</p>
+    <div class="hero-divider"></div>
+  </div>
+
+  <div class="settings-panel" id="settings-panel">
+    <p class="settings-label">🔑 API Key — Required to power the AI</p>
+    <input class="key-input" type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off">
+    <div class="key-btn-row">
+      <button class="key-save-btn" onclick="saveApiKey()">Save Key</button>
+      <button class="key-clear-btn" onclick="clearApiKey()">Clear</button>
+    </div>
+    <p class="key-status" id="key-status"></p>
+    <div class="key-warning">⚠️ Keep this panel private. Your API key is stored in your browser only — never share your screen while this panel is open.</div>
+    <p class="key-footer">Get your free key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></p>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+      <input class="key-input" type="password" id="access-code-input" placeholder="Access code (beta or owner)" autocomplete="off" style="margin-bottom:0">
+    </div>
+  </div>
+
+  <div class="usage-bar">
+    <div class="usage-dots" id="usage-dots"></div>
+    <div class="usage-text" id="usage-text"></div>
+  </div>
+
+  <p class="section-label">Step 1 — Upload your photo</p>
+  <div class="upload-zone" id="upload-zone" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+    <div id="upload-idle">
+      <div class="upload-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a8967e" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <p class="upload-title">Tap to upload a photo</p>
+      <p class="upload-sub">Camera photos, screenshots or saved images</p>
+    </div>
+    <div id="upload-done" class="file-ready hidden">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 6px;display:block"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+      <p class="upload-title" style="font-size:13px">Photo ready</p>
+      <div id="file-name-display" class="file-name-chip"></div>
+    </div>
+    <input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
+  </div>
+  <p class="upload-hint">✦ Works with camera photos, screenshots and saved images · Auto-optimised before sending</p>
+
+  <div class="spacer"></div>
+  <p class="section-label">Step 2 — Select piece type</p>
+  <div class="chip-grid">
+    <div class="chip" onclick="selectChip(this,'Ring')">💍 Ring</div>
+    <div class="chip" onclick="selectChip(this,'Bangle')">⭕ Bangle</div>
+    <div class="chip" onclick="selectChip(this,'Bracelet')">📿 Bracelet</div>
+    <div class="chip" onclick="selectChip(this,'Necklace')">🪬 Necklace</div>
+    <div class="chip" onclick="selectChip(this,'Earrings')">✨ Earrings</div>
+    <div class="chip" onclick="selectChip(this,'Pendant')">🔮 Pendant</div>
+    <div class="chip" onclick="selectChip(this,'Anklet')">🦶 Anklet</div>
+    <div class="chip" onclick="selectChip(this,'Brooch')">📌 Brooch</div>
+    <div class="chip" onclick="selectChip(this,'Hair Jewellery')">🪷 Hair Jewellery</div>
+    <div class="chip" onclick="selectChip(this,'Nose Ring')">🌸 Nose Ring</div>
+    <div class="chip" onclick="selectChip(this,'Loose Gemstone')">💎 Loose Gemstone</div>
+    <div class="chip" onclick="selectChip(this,'Other')">＋ Other</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="analyse-btn" id="analyse-btn" disabled onclick="startAnalysis()">Upload a photo &amp; select product type</button>
+  <div class="spacer"></div>
+  <div id="err-display" class="err-box hidden">
+    <p class="err-title" id="err-title"></p>
+    <p class="err-body" id="err-body"></p>
+  </div>
+</div>
+
+<!-- PAYWALL -->
+<div id="sc-paywall" class="hidden">
+  <div class="paywall-box">
+    <div class="paywall-gem">✦</div>
+    <p class="paywall-title">You've used your 10 free analyses</p>
+    <p class="paywall-sub">JewelLens Premium gives you unlimited analyses, full styling content, Seller Verify, and all future features — launching soon.</p>
+    <p class="paywall-price" id="paywall-price-monthly">€7.99</p>
+    <p class="paywall-period" id="paywall-period-monthly">per month · cancel anytime</p>
+    <button class="paywall-btn" onclick="openWaitlist()">Join the Premium Waitlist ✦</button>
+    <div style="margin-top:14px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:4px">Best value</p>
+      <p style="font-size:15px;font-weight:500;color:var(--text)" id="paywall-price-annual">€59/year</p>
+      <p style="font-size:11px;color:var(--gold)" id="paywall-saving">Save 38% · approx. $67</p>
+    </div>
+    <div style="margin-top:16px">
+      <div class="perk">✦ &nbsp;Unlimited jewellery analyses</div>
+      <div class="perk">✦ &nbsp;Seller Claim Check on every piece</div>
+      <div class="perk">✦ &nbsp;Save unlimited pieces to collections</div>
+      <div class="perk">✦ &nbsp;Priority AI processing</div>
+      <div class="perk">✦ &nbsp;Early access to new features</div>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:16px;line-height:1.6">We'll notify you the moment Premium launches. Be first in line.</p>
+  </div>
+  <button onclick="showScreen('upload')" style="width:100%;margin-top:12px;padding:11px;border-radius:var(--radius);background:none;border:1px solid var(--border);color:var(--text3);font-size:13px;cursor:pointer;font-family:var(--font-body)">← Go back</button>
+</div>
+
+<!-- ANALYZING -->
+<div id="sc-analyzing" class="hidden">
+  <div style="padding-top:80px;text-align:center">
+    <div class="spinner"></div>
+    <p class="analyzing-title">Analysing your <span id="analyzing-type"></span></p>
+    <p class="analyzing-sub">Our expert AI is examining every detail</p>
+    <div class="progress-log" id="progress-log"></div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="sc-results" class="hidden">
+  <div style="padding-top:24px">
+    <button class="back-btn" onclick="resetApp()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Analyse another piece
+    </button>
+    <div class="img-wrap">
+      <img id="prev-img" class="preview" alt="Your jewellery piece"/>
+      <div id="badge-cat" class="badge-cat"></div>
+      <div id="badge-type" class="badge-type"></div>
+      <button class="save-btn" id="save-btn" onclick="openSaveModal()" title="Save to Collection">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a8967e" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+    </div>
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('know',this)">Know It</button>
+      <button class="tab-btn" onclick="switchTab('style',this)">Style It</button>
+      <button class="tab-btn" onclick="switchTab('find',this)">Find It</button>
+      <button class="tab-btn" onclick="switchTab('verify',this)">Verify</button>
+    </div>
+
+    <div id="tab-know">
+      <p id="p-summary" class="summary"></p>
+      <div id="p-confidence" class="confidence-wrap hidden">
+        <div class="confidence-header">
+          <span class="confidence-label">Analysis Confidence</span>
+          <span class="confidence-pct" id="p-conf-pct"></span>
+        </div>
+        <div class="confidence-track"><div class="confidence-fill" id="p-conf-bar" style="width:0%"></div></div>
+        <p class="confidence-note" id="p-conf-note"></p>
+      </div>
+      <div id="p-rows" class="detail-card"></div>
+      <div id="p-tags" class="tags-wrap"></div>
+      <div id="p-redflag" class="redflag-box hidden">
+        <p class="redflag-label">⚠ Visual Flags</p>
+        <p id="p-redflag-text" class="redflag-text"></p>
+      </div>
+      <div class="care-box">
+        <p class="care-label">Care Tip</p>
+        <p id="p-care" class="care-text"></p>
+      </div>
+      <div class="next-steps" id="p-next-steps">
+        <p class="next-steps-title">✦ Next Steps</p>
+        <a href="https://www.gia.edu/retailer-lookup" target="_blank" class="next-step-link">
+          <div><span class="next-step-name">Get a professional appraisal</span><span class="next-step-sub">Find a GIA-certified jeweller near you</span></div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4bab0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="https://www.google.com/search?q=jewellery+insurance" target="_blank" class="next-step-link">
+          <div><span class="next-step-name">Insure this piece</span><span class="next-step-sub">Find specialist jewellery insurance in your country</span></div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4bab0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="https://www.google.com/search?q=sell+jewellery+consignment+near+me" target="_blank" class="next-step-link">
+          <div><span class="next-step-name">Sell or consign this piece</span><span class="next-step-sub">Find local and online resale options near you</span></div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4bab0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+
+      <button id="copy-summary-btn" class="copy-summary-btn" onclick="downloadSummary()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Summary (.txt)
+      </button>
+      <button class="share-card-btn" id="share-card-btn" onclick="shareCard()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" id="share-icon"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span id="share-btn-label">Share Analysis Card</span>
+      </button>
+
+      <!-- Rating -->
+      <div class="rating-row">
+        <span class="rating-label">Was this analysis helpful?</span>
+        <button class="rate-btn" id="rate-up" onclick="rateAnalysis('up')" title="Yes, helpful">👍</button>
+        <button class="rate-btn" id="rate-down" onclick="rateAnalysis('down')" title="Needs improvement">👎</button>
+      </div>
+      <button class="feedback-btn" onclick="openFeedback()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Suggest a feature or share feedback
+      </button>
+
+      <div class="spacer"></div>
+      <button id="look-less-btn" class="look-less-btn hidden" onclick="toggleLookLess()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Get This Look for Less
+      </button>
+      <div id="look-less-panel" class="look-less-panel hidden"></div>
+    </div>
+
+    <div id="tab-style" class="hidden">
+      <p class="style-intro">Three ways to wear this piece — from everyday to evening.</p>
+      <div id="style-cards"></div>
+    </div>
+
+    <div id="tab-find" class="hidden">
+      <p class="find-intro">Discover similar pieces from three curated global platforms.</p>
+      <div id="find-links"></div>
+    </div>
+
+    <div id="tab-verify" class="hidden">
+      <div class="verify-disclaimer">
+        <p class="verify-disclaimer-title">⚠ Important Notice</p>
+        <p class="verify-disclaimer-text">This analysis is based on visual evidence in the photograph only. JewelLens can flag inconsistencies but <strong>cannot confirm authenticity</strong>. Always have any significant purchase examined by a certified gemologist or independent jeweller before buying.</p>
+      </div>
+      <p class="verify-input-label">What is the seller claiming?</p>
+      <textarea class="verify-textarea" id="verify-input" rows="4" placeholder="e.g. 'Solid silver earrings, natural turquoise stones, handmade, 12 grams'&#10;&#10;Describe exactly what the seller told you — material, stones, weight, origin, or any other claims."></textarea>
+      <button class="verify-btn" id="verify-btn" onclick="runVerify()">Check Seller's Claims →</button>
+      <div id="verify-results" class="verify-results hidden"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY STONE -->
+<div id="sc-dailystone" class="hidden">
+  <div class="screen-hero">
+    <p class="screen-title"><span class="screen-star">✦</span>Daily <span class="gold-word">Stone</span></p>
+    <p class="screen-sub">Your personal gemstone reading — updated every day.</p>
+  </div>
+  <div class="ds-date-bar">
+    <p class="ds-date" id="ds-date-label"></p>
+  </div>
+  <div class="ds-sign-picker" id="ds-sign-picker">
+    <p class="section-label" style="text-align:center;margin-bottom:14px">Choose your zodiac sign</p>
+    <div class="zodiac-grid">
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Aries')"><span class="zodiac-emoji">♈</span><span class="zodiac-name">Aries</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Taurus')"><span class="zodiac-emoji">♉</span><span class="zodiac-name">Taurus</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Gemini')"><span class="zodiac-emoji">♊</span><span class="zodiac-name">Gemini</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Cancer')"><span class="zodiac-emoji">♋</span><span class="zodiac-name">Cancer</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Leo')"><span class="zodiac-emoji">♌</span><span class="zodiac-name">Leo</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Virgo')"><span class="zodiac-emoji">♍</span><span class="zodiac-name">Virgo</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Libra')"><span class="zodiac-emoji">♎</span><span class="zodiac-name">Libra</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Scorpio')"><span class="zodiac-emoji">♏</span><span class="zodiac-name">Scorpio</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Sagittarius')"><span class="zodiac-emoji">♐</span><span class="zodiac-name">Sagittarius</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Capricorn')"><span class="zodiac-emoji">♑</span><span class="zodiac-name">Capricorn</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Aquarius')"><span class="zodiac-emoji">♒</span><span class="zodiac-name">Aquarius</span></div>
+      <div class="zodiac-chip" onclick="selectZodiac(this,'Pisces')"><span class="zodiac-emoji">♓</span><span class="zodiac-name">Pisces</span></div>
+    </div>
+    <button class="ds-btn" id="ds-pick-btn" disabled onclick="confirmSign()">Show Today's Stone ✦</button>
+  </div>
+  <div id="ds-result" class="hidden"></div>
+</div>
+
+<!-- COMPARE -->
+<div id="sc-compare" class="hidden">
+  <div class="screen-hero">
+    <p class="screen-title"><span class="screen-star">✦</span>Compare Two <span class="gold-word">Pieces</span></p>
+    <p class="screen-sub">Upload two jewellery photos for a side-by-side expert comparison.</p>
+  </div>
+  <div id="compare-input-section">
+    <div class="compare-slots">
+      <div class="compare-slot" id="cslot-a" onclick="document.getElementById('cfi-a').click()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a8967e" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span class="compare-slot-label">Piece A</span><span class="compare-slot-hint">Tap to upload</span>
+        <input type="file" id="cfi-a" accept="image/*" style="display:none" onchange="handleCompareFile('a',this.files[0])">
+      </div>
+      <div class="compare-slot" id="cslot-b" onclick="document.getElementById('cfi-b').click()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a8967e" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span class="compare-slot-label">Piece B</span><span class="compare-slot-hint">Tap to upload</span>
+        <input type="file" id="cfi-b" accept="image/*" style="display:none" onchange="handleCompareFile('b',this.files[0])">
+      </div>
+    </div>
+    <div class="compare-type-row">
+      <select class="compare-type-select" id="ctype-a"><option value="">Type for A…</option><option>Ring</option><option>Bangle</option><option>Bracelet</option><option>Necklace</option><option>Earrings</option><option>Pendant</option><option>Anklet</option><option>Brooch</option><option>Maang Tikka</option><option>Nose Ring</option><option>Loose Gemstone</option><option>Other</option></select>
+      <select class="compare-type-select" id="ctype-b"><option value="">Type for B…</option><option>Ring</option><option>Bangle</option><option>Bracelet</option><option>Necklace</option><option>Earrings</option><option>Pendant</option><option>Anklet</option><option>Brooch</option><option>Maang Tikka</option><option>Nose Ring</option><option>Loose Gemstone</option><option>Other</option></select>
+    </div>
+    <button class="compare-btn" id="compare-btn" disabled onclick="runComparison()">Upload both pieces to compare</button>
+  </div>
+  <div id="compare-err" class="err-box hidden" style="margin-top:12px"><p class="err-title" id="compare-err-title"></p><p class="err-body" id="compare-err-body"></p></div>
+  <div id="compare-results" style="margin-top:20px" class="hidden"></div>
+</div>
+
+<!-- SAVED -->
+<div id="sc-saved" class="hidden">
+  <div class="saved-hero">
+    <p class="saved-title"><span style="color:var(--gold)">✦</span> Private <span style="color:var(--gold)">Collection</span></p>
+    <p class="saved-sub">Your saved jewellery pieces</p>
+  </div>
+  <div class="collection-tabs" id="collection-tabs"></div>
+  <div class="saved-grid" id="saved-grid"></div>
+  <div class="saved-empty hidden" id="saved-empty">
+    <div class="saved-empty-icon">🪬</div>
+    <p class="saved-empty-text">No pieces saved yet.<br>Analyse a piece and tap ♡ to save it here.</p>
+  </div>
+</div>
+
+</div><!-- end .app -->
+
+<!-- SAVE MODAL -->
+<div class="modal-overlay" id="save-modal" onclick="if(event.target===this)closeSaveModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <p class="modal-title">Save to Collection</p>
+    <div class="collection-list" id="modal-collection-list"></div>
+    <div class="new-collection-row">
+      <input class="new-collection-input" id="new-col-name" placeholder="New collection name…" maxlength="30">
+      <button class="new-collection-btn" onclick="createCollection()">+ Create</button>
+    </div>
+    <div style="margin-top:12px">
+      <button onclick="closeSaveModal()" style="width:100%;padding:11px;border-radius:var(--radius-sm);background:none;border:1px solid var(--border);color:var(--text3);font-size:13px;cursor:pointer;font-family:var(--font-body)">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-analyse" onclick="switchNav('analyse')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Analyse
+  </button>
+  <button class="nav-btn" id="nav-dailystone" onclick="switchNav('dailystone')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Daily Stone
+  </button>
+  <button class="nav-btn" id="nav-compare" onclick="switchNav('compare')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="9" height="18" rx="1"/><rect x="13" y="3" width="9" height="18" rx="1"/></svg>
+    Compare
+  </button>
+  <button class="nav-btn" id="nav-saved" onclick="switchNav('saved')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Saved
+  </button>
+</nav>
+
+<!-- ONBOARDING MODAL -->
+<div class="onboard-overlay" id="onboard-modal">
+  <div class="onboard-sheet">
+    <div class="onboard-logo-row">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c9983c" stroke-width="1.2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/>
+        <circle cx="12" cy="12" r="1.2" fill="#c9983c" stroke="none"/>
+      </svg>
+      <span class="onboard-logo-text"><span style="color:#1e1a16">Jewel</span><span style="color:#c9983c">Lens</span></span>
+    </div>
+    <p class="onboard-tagline">Every piece has a story.</p>
+    <p class="onboard-sub">Your AI jewellery expert — identifying, styling and authenticating pieces from every tradition around the world. From Rajasthani Meenakari to Japanese Mokume-gane.</p>
+    <div class="onboard-features">
+      <div class="onboard-feature">
+        <div class="onboard-feat-icon">🔍</div>
+        <div><p class="onboard-feat-title">Instant Identification</p><p class="onboard-feat-desc">Metal, stones, style era, craftsmanship tradition — expert analysis in seconds</p></div>
+      </div>
+      <div class="onboard-feature">
+        <div class="onboard-feat-icon">✦</div>
+        <div><p class="onboard-feat-title">Style &amp; Discover</p><p class="onboard-feat-desc">Three ways to wear it, where to find similar pieces across five curated global platforms</p></div>
+      </div>
+      <div class="onboard-feature">
+        <div class="onboard-feat-icon">🛡</div>
+        <div><p class="onboard-feat-title">Verify Before You Buy</p><p class="onboard-feat-desc">Check seller claims and spot visual red flags before committing</p></div>
+      </div>
+    </div>
+    <p class="onboard-free-note">✦ 10 free analyses to explore — no account needed</p>
+    <button class="onboard-btn" onclick="closeOnboarding()">Start Exploring ✦</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+var _mem={};
+function _get(k){ try{ return window.localStorage&&window.localStorage.getItem(k); }catch(e){ return _mem[k]||null; } }
+function _set(k,v){ try{ if(window.localStorage) window.localStorage.setItem(k,v); }catch(e){} _mem[k]=v; }
+
+// ── CONFIG — change before deploying ──
+var OWNER_CODE='swaGGer#*19%OWNEr';
+var BETA_CODE='JLBETA2026';
+var FEEDBACK_EMAIL='jewellensapp@gmail.com';
+var TALLY_URL='https://tally.so/r/Pdbe9x';
+
+var selectedFile=null, selectedType=null, selectedBase64=null, selectedMime=null, currentResult=null;
+var compareA={b64:null,mime:null,preview:null}, compareB={b64:null,mime:null,preview:null};
+var _apiKey='', _usageCount=0, _collections=[], _savedItems=[];
+var _selectedSign=null, _confirmedSign=null;
+var _ownerMode=false, _betaMode=false;
+var FREE_LIMIT=10;
+
+try{ _apiKey=_get('jl_apikey')||''; }catch(e){}
+try{ _usageCount=parseInt(_get('jl_uses')||'0',10)||0; }catch(e){}
+try{ _collections=JSON.parse(_get('jl_cols')||'[]'); }catch(e){ _collections=[]; }
+try{ _savedItems=JSON.parse(_get('jl_items')||'[]'); }catch(e){ _savedItems=[]; }
+try{ _confirmedSign=_get('jl_sign')||null; }catch(e){}
+try{ if(_get('jl_owner')==='1') _ownerMode=true; }catch(e){}
+try{ if(_get('jl_beta')==='1') _betaMode=true; }catch(e){}
+
+(function(){ try{ var el=document.getElementById('api-key'); if(el&&_apiKey){ el.value=_apiKey; document.getElementById('key-status').textContent='✓ Key loaded'; } }catch(e){} })();
+
+// Detect native share capability
+var _canShare=(typeof navigator.share==='function')&&(typeof navigator.canShare==='function');
+(function(){
+  var lbl=document.getElementById('share-btn-label');
+  var icon=document.getElementById('share-icon');
+  if(lbl){ lbl.textContent=_canShare?'Share Analysis Card':'Download Analysis Card'; }
+  if(icon&&!_canShare){
+    icon.innerHTML='<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>';
+  }
+})();
+
+// ── ONBOARDING ──
+(function(){
+  try{ if(!_get('jl_onboarded')){ document.getElementById('onboard-modal').classList.add('open'); } }catch(e){}
+})();
+function closeOnboarding(){
+  document.getElementById('onboard-modal').classList.remove('open');
+  try{ _set('jl_onboarded','1'); }catch(e){}
+}
+
+// ── WAITLIST ──
+function openWaitlist(){
+  window.open(TALLY_URL,'_blank','noopener');
+}
+
+// ── USAGE ──
+function getUsageCount(){ return _usageCount; }
+function incrementUsage(){ _usageCount++; try{ _set('jl_uses',_usageCount); }catch(e){} renderUsageBar(); }
+function renderUsageBar(){
+  var used=getUsageCount(), rem=Math.max(0,FREE_LIMIT-used);
+  var dots=document.getElementById('usage-dots'), txt=document.getElementById('usage-text');
+  if(!dots||!txt) return;
+  dots.innerHTML='';
+  for(var i=0;i<FREE_LIMIT;i++){ var d=document.createElement('div'); d.className='usage-dot'+(i<used?' used':''); dots.appendChild(d); }
+  txt.innerHTML=rem>0?'<span>'+rem+'</span> free '+(rem===1?'analysis':'analyses')+' left':'<span style="color:#e74c3c">0</span> free left — join waitlist';
+}
+
+// ── NAV ──
+function switchNav(tab){
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  var nb=document.getElementById('nav-'+tab); if(nb) nb.classList.add('active');
+  ['upload','paywall','analyzing','results','dailystone','compare','saved'].forEach(function(s){
+    var el=document.getElementById('sc-'+s); if(el) el.classList.add('hidden');
+  });
+  if(tab==='analyse'){ document.getElementById('sc-upload').classList.remove('hidden'); }
+  else{
+    var sc=document.getElementById('sc-'+tab); if(sc) sc.classList.remove('hidden');
+    if(tab==='dailystone') initDailyStone();
+    if(tab==='saved') renderSavedScreen();
+  }
+}
+
+function showScreen(n){
+  ['upload','paywall','analyzing','results'].forEach(function(s){ var el=document.getElementById('sc-'+s); if(el) el.classList.toggle('hidden',s!==n); });
+}
+function switchTab(n,btn){
+  ['know','style','find','verify'].forEach(function(t){ var el=document.getElementById('tab-'+t); if(el) el.classList.toggle('hidden',t!==n); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+}
+
+// ── API KEY ──
+function getApiKey(){ return (document.getElementById('api-key').value||_apiKey).trim(); }
+
+var _logoTaps=0, _logoTapTimer=null;
+function handleLogoTap(){
+  _logoTaps++;
+  clearTimeout(_logoTapTimer);
+  if(_logoTaps>=5){
+    _logoTaps=0;
+    var btn=document.getElementById('settings-btn');
+    btn.style.display='flex';
+    toggleSettings();
+  }
+  _logoTapTimer=setTimeout(function(){ _logoTaps=0; },1500);
+}
+function toggleSettings(){
+  document.getElementById('settings-panel').classList.toggle('open');
+  var isOpen=document.getElementById('settings-panel').classList.contains('open');
+  document.getElementById('settings-btn').style.display=isOpen?'flex':'none';
+}
+function saveApiKey(){
+  var k=getApiKey(); if(!k) return;
+  _apiKey=k; try{ _set('jl_apikey',k); }catch(e){}
+  var code=(document.getElementById('access-code-input').value||'').trim();
+  var statusMsg='✓ Key saved';
+  if(code===OWNER_CODE){
+    _ownerMode=true; _betaMode=false;
+    try{ _set('jl_owner','1'); _set('jl_beta',''); }catch(e){}
+    statusMsg='✓ Key saved · Owner mode active ✦';
+  } else if(code===BETA_CODE){
+    _betaMode=true; _ownerMode=false;
+    try{ _set('jl_beta','1'); _set('jl_owner',''); }catch(e){}
+    statusMsg='✓ Key saved · Beta access active ✦';
+  } else if(code){
+    statusMsg='✓ Key saved (access code not recognised)';
+  }
+  document.getElementById('key-status').textContent=statusMsg;
+  setTimeout(function(){ document.getElementById('settings-panel').classList.remove('open'); document.getElementById('settings-btn').style.display='none'; },900);
+}
+function clearApiKey(){
+  _apiKey=''; _ownerMode=false; _betaMode=false;
+  document.getElementById('api-key').value='';
+  document.getElementById('access-code-input').value='';
+  try{ _set('jl_apikey',''); _set('jl_owner',''); _set('jl_beta',''); }catch(e){}
+  document.getElementById('key-status').textContent='Key cleared';
+}
+
+// ── CURRENCY DETECTION ──
+function getLocalPricing(){
+  var lang=navigator.language||'en-US';
+  var region=(lang.split('-')[1]||'').toUpperCase();
+  if(['US','CA','AU','NZ','SG','HK'].includes(region)) return {monthly:'$8.99',annual:'$67',saving:'Save 38%',altNote:'approx. €7.99/mo'};
+  if(region==='GB') return {monthly:'£6.99',annual:'£52',saving:'Save 38%',altNote:'approx. €7.99/mo'};
+  if(region==='IN') return {monthly:'₹649',annual:'₹4,999',saving:'Save 38%',altNote:'approx. €7.99/mo'};
+  return {monthly:'€7.99',annual:'€59',saving:'Save 38%',altNote:'approx. $8.99/mo'};
+}
+function renderPaywallPricing(){
+  var p=getLocalPricing();
+  var mp=document.getElementById('paywall-price-monthly');
+  var pp=document.getElementById('paywall-period-monthly');
+  var ap=document.getElementById('paywall-price-annual');
+  var sp=document.getElementById('paywall-saving');
+  if(mp) mp.textContent=p.monthly;
+  if(pp) pp.textContent='per month · cancel anytime · '+p.altNote;
+  if(ap) ap.textContent=p.annual+'/year';
+  if(sp) sp.textContent=p.saving;
+}
+
+// ── RATING ──
+function rateAnalysis(direction){
+  var upBtn=document.getElementById('rate-up'), downBtn=document.getElementById('rate-down');
+  if(!upBtn||!downBtn) return;
+  upBtn.classList.remove('rated'); downBtn.classList.remove('rated');
+  if(direction==='up'){ upBtn.classList.add('rated'); }
+  else{ downBtn.classList.add('rated'); }
+  var log={type:currentResult?currentResult.piece_type:'unknown',rating:direction,ts:new Date().toISOString()};
+  try{ var ratings=JSON.parse(_get('jl_ratings')||'[]'); ratings.push(log); _set('jl_ratings',JSON.stringify(ratings)); }catch(e){}
+}
+
+// ── FEEDBACK ──
+function openFeedback(){
+  var subject='JewelLens Feedback';
+  var body='Hi,\n\nI wanted to share some feedback about JewelLens:\n\n[Your message here]\n\n---\nPiece analysed: '+(currentResult?currentResult.piece_type:'—')+'\nApp version: v6';
+  window.location.href='mailto:'+FEEDBACK_EMAIL+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+
+// ── FILE HANDLING ──
+function handleDrop(e){ e.preventDefault(); var f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) handleFile(f); }
+function handleFile(file){
+  if(!file) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    compressImage(e.target.result,file.type,function(compressed){
+      selectedBase64=compressed.split(',')[1]; selectedMime='image/jpeg'; selectedFile=file;
+      document.getElementById('prev-img').src=compressed;
+      document.getElementById('upload-idle').classList.add('hidden');
+      document.getElementById('upload-done').classList.remove('hidden');
+      document.getElementById('file-name-display').textContent=file.name;
+      document.getElementById('upload-zone').classList.add('has-file');
+      document.getElementById('err-display').classList.add('hidden');
+      updateBtn();
+    });
+  };
+  r.readAsDataURL(file);
+}
+function compressImage(dataUrl,mimeType,callback){
+  var img=new Image();
+  img.onload=function(){
+    var MAX=3.8*1024*1024, MAX_DIM=1600;
+    var w=img.width, h=img.height;
+    if(w>MAX_DIM||h>MAX_DIM){ var ratio=Math.min(MAX_DIM/w,MAX_DIM/h); w=Math.round(w*ratio); h=Math.round(h*ratio); }
+    var canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    var q=0.85, result=canvas.toDataURL('image/jpeg',q);
+    while(result.length*0.75>MAX&&q>0.3){ q-=0.1; result=canvas.toDataURL('image/jpeg',q); }
+    callback(result);
+  };
+  img.src=dataUrl;
+}
+
+// ── CHIP + BUTTON ──
+function selectChip(el,type){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('selected'); });
+  el.classList.add('selected'); selectedType=type; updateBtn();
+}
+function updateBtn(){
+  var btn=document.getElementById('analyse-btn');
+  if(selectedFile&&selectedType){ btn.disabled=false; btn.textContent='Analyse this '+selectedType+' →'; }
+  else if(selectedFile){ btn.disabled=true; btn.textContent='Now select a product type ↑'; }
+  else if(selectedType){ btn.disabled=true; btn.textContent='Now upload a photo ↑'; }
+  else{ btn.disabled=true; btn.textContent='Upload a photo & select product type'; }
+}
+
+// ── RESET ──
+function resetApp(){
+  selectedFile=null; selectedType=null; selectedBase64=null; selectedMime=null; currentResult=null;
+  try{ document.getElementById('fi').value=''; }catch(e){}
+  document.getElementById('upload-idle').classList.remove('hidden');
+  document.getElementById('upload-done').classList.add('hidden');
+  document.getElementById('upload-zone').classList.remove('has-file');
+  document.getElementById('progress-log').innerHTML='';
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('selected'); });
+  var sb=document.getElementById('save-btn');
+  if(sb){ sb.querySelector('svg').setAttribute('fill','none'); sb.querySelector('svg').setAttribute('stroke','#a8967e'); }
+  document.getElementById('err-display').classList.add('hidden');
+  var llp=document.getElementById('look-less-panel'); if(llp) llp.classList.add('hidden');
+  var llb=document.getElementById('look-less-btn');
+  if(llb) llb.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Get This Look for Less';
+  var vr=document.getElementById('verify-results'); if(vr) vr.classList.add('hidden');
+  var vi=document.getElementById('verify-input'); if(vi) vi.value='';
+  try{ document.getElementById('rate-up').classList.remove('rated'); document.getElementById('rate-down').classList.remove('rated'); }catch(e){}
+  switchTab('know',document.querySelector('.tab-btn'));
+  updateBtn(); showScreen('upload');
+}
+
+// ── API CALL ──
+async function callClaude(imagePayload,prompt,maxTokens){
+  maxTokens=maxTokens||3000;
+  var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
+    headers:{'Content-Type':'application/json','x-api-key':getApiKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:maxTokens,
+      messages:[{role:"user",content:[...imagePayload,{type:"text",text:prompt}]}]})});
+  if(!res.ok){ var e=await res.json().catch(function(){ return null; }); throw new Error((e&&e.error&&e.error.message?e.error.message:'API error')+' ('+res.status+')'); }
+  var data=await res.json();
+  var rawText=data.content.map(function(b){ return b.text||''; }).join('');
+  var result;
+  try{ result=JSON.parse(rawText.replace(/^```json\s*/i,'').replace(/\s*```\s*$/i,'').trim()); }
+  catch(e1){ var m=rawText.match(/\{[\s\S]*\}/); if(m){ result=JSON.parse(m[0]); }else throw new Error('PARSE_ERROR'); }
+  return result;
+}
+
+// ── ANALYSIS ──
+function startAnalysis(){
+  if(!selectedFile||!selectedType) return;
+  if(!getApiKey()){ document.getElementById('settings-panel').classList.add('open'); showError('API Key Required','Please add your Anthropic API key — tap the logo 5 times to reveal the settings panel.'); return; }
+  if(getUsageCount()>=FREE_LIMIT&&!_ownerMode&&!_betaMode){ renderPaywallPricing(); showScreen('paywall'); return; }
+  try{ document.getElementById('rate-up').classList.remove('rated'); document.getElementById('rate-down').classList.remove('rated'); }catch(e){}
+  document.getElementById('analyzing-type').textContent=selectedType;
+  document.getElementById('badge-cat').textContent=selectedType;
+  showScreen('analyzing');
+  var log=document.getElementById('progress-log'); log.innerHTML='';
+  ['Reading image...','Identifying metal and construction...','Analysing stones and setting...','Researching cultural tradition...','Generating styling guide...'].forEach(function(m,i){
+    setTimeout(function(){ var p=document.createElement('p'); p.textContent=m; log.appendChild(p); },i*700);
+  });
+  analyzeJewellery(selectedType);
+}
+
+async function analyzeJewellery(productType){
+  var gatekeeper='CRITICAL FIRST CHECK — Before any analysis, look at the image carefully. If the image clearly shows a non-jewellery object — such as a handbag, clutch, wallet, clothing, shoes, food, furniture, a person\'s face, a landscape, a car, an animal, a phone, or any object that is clearly not jewellery — you MUST ignore the user\'s product type selection and return ONLY this JSON: {"not_jewellery":true,"message":"This doesn\'t appear to be a jewellery piece. JewelLens is designed for jewellery only — rings, necklaces, earrings, bracelets, bangles, pendants, brooches, anklets, nose rings, maang tikkas, and loose gemstones."}. The user may have selected a jewellery type (like bracelet) by mistake — this does not mean the image contains jewellery. A clutch bag is not a bracelet. A handbag is not jewellery. A shoe is not jewellery. Only proceed with the full analysis if the image genuinely shows a jewellery piece or loose gemstone. A jewellery piece does not need to perfectly match the selected type — a user might select bracelet for a cuff or bangle — but if the image is clearly a non-jewellery object, return the not_jewellery response without exception.\n\n';
+  var prompt=gatekeeper+'You are a world-class jewellery expert, gemologist and cultural historian with encyclopaedic knowledge of jewellery traditions from every continent and culture — including Indian regional traditions (Rajasthani Meenakari, Mughal Kundan, Polki, Jadau, Temple jewellery, Bidri, Filigree from Cuttack, Pachchikam, Thewa, Navratna), West African goldwork (Ashanti, Yoruba, Akan, Baule), Japanese metalwork (mokume-gane, shakudo, nunome, irogane), Chinese jade and silver filigree traditions (Yunnan, Miao, Dong), Middle Eastern and Ottoman goldwork, Persian enamel (minakari), Georgian and Victorian European fine jewellery, Art Nouveau and Art Deco movements, Scandinavian modernist jewellery, Latin American filigree (Colombian, Mexican Oaxacan, Peruvian), Byzantine and Greek traditions, Indigenous North American silverwork (Navajo, Zuni, Hopi), East African beadwork in metal, Ethiopian cross jewellery, Berber silver jewellery of North Africa, Yemeni and Gulf jewellery, Indonesian and Balinese goldwork, Thai nielloware, and all contemporary global design movements. You are equally expert in all traditions — no tradition is more or less important than any other. The user has selected this product type: '+productType+'. Trust this selection if the image shows any jewellery piece. Respond ONLY with valid JSON, no markdown, no backticks, raw JSON only.\n\n{"analysis_confidence":{"score":85,"reason":"Brief explanation of confidence level"},"piece_type":"specific descriptive name","metal":"specific e.g. 22-karat yellow gold or Sterling silver 925","metal_confidence":"high or medium or low","construction_method":"e.g. hand-fabricated, lost-wax cast, die-struck","construction_note":"one sentence plain-English","stones":[{"name":"Emerald","cut":"Oval Cabochon","color":"Deep Forest Green","setting":"Bezel","setting_note":"one sentence"}],"cut_performance":"For faceted stones only — visual assessment of light performance, or Not applicable","natural_vs_lab":"Honest visual assessment with uncertainty caveat","surface_treatment":"finish and any visible stone treatments","style_era":"e.g. Contemporary, Art Deco, Victorian","craftsmanship_tradition":"specific regional tradition with maximum specificity — name the exact tradition, not just the country","origin_confidence":"high or medium or low","origin_note":"one sentence","tier":"fashion or fine or luxury","resale_signal":"one factual sentence","visible_red_flags":"inconsistencies or None visible","buyer_documentation":"what to request","summary":"2-3 expert sentences","style_tags":["tag"],"styling_ideas":[{"title":"Casual Chic","occasion":"Weekend / Day Out","description":"specific suggestion"},{"title":"Office Edit","occasion":"Work / Professional","description":"suggestion"},{"title":"Evening Glam","occasion":"Dinner / Event","description":"suggestion"}],"look_for_less":{"alt_stones":["suggestion"],"alt_metals":["suggestion"],"alt_finishes":["suggestion"],"where_to_source":"global tip"},"search_terms":{"pinterest":"search string","firstdibs":"search string","etsy":"search string"},"care_tip":"one specific instruction"}';
+  try{
+    var imgPayload=[{type:"image",source:{type:"base64",media_type:selectedMime,data:selectedBase64}}];
+    var result=await callClaude(imgPayload,prompt,3500);
+    if(result.not_jewellery){
+      showNotJewellery(result.message);
+      return;
+    }
+    incrementUsage();
+    renderResults(result);
+  }catch(err){
+    if(err.message==='PARSE_ERROR') showError('Analysis Incomplete','Response was cut off. Please try again.');
+    else showError('Error',err.message);
+  }
+}
+
+function showNotJewellery(message){
+  showScreen('upload');
+  var msg=message||'This doesn\'t appear to be a jewellery piece. JewelLens is designed for jewellery only.';
+  document.getElementById('err-title').textContent='Not a jewellery piece';
+  document.getElementById('err-body').textContent=msg+' No analysis credit was used — please upload a jewellery photo and try again.';
+  document.getElementById('err-display').classList.remove('hidden');
+}
+
+function renderResults(r){
+  currentResult=r;
+  document.getElementById('badge-type').textContent=r.piece_type||'';
+  document.getElementById('p-summary').textContent=r.summary||'';
+  document.getElementById('p-care').textContent=r.care_tip||'';
+
+  // Confidence
+  var conf=r.analysis_confidence;
+  if(conf&&conf.score){
+    var score=Math.max(0,Math.min(100,parseInt(conf.score)||0));
+    document.getElementById('p-conf-pct').textContent=score+'%';
+    setTimeout(function(){ document.getElementById('p-conf-bar').style.width=score+'%'; },100);
+    document.getElementById('p-conf-note').textContent=conf.reason||'';
+    document.getElementById('p-confidence').classList.remove('hidden');
+  } else { document.getElementById('p-confidence').classList.add('hidden'); }
+
+  // Detail rows
+  var rows=[
+    ['Metal',(r.metal||'')+(r.metal_confidence==='low'?' (approx.)':'')],
+    ['Construction',r.construction_method||''],
+    ['Stones',r.stones?r.stones.map(function(s){ return s.name+(s.cut?' · '+s.cut:''); }).join(', '):'None'],
+    ['Cut Performance',r.cut_performance||'—'],
+    ['Natural vs Lab',r.natural_vs_lab||'—'],
+    ['Surface',r.surface_treatment||''],
+    ['Style Era',r.style_era||''],
+    ['Tradition',r.craftsmanship_tradition||''],
+    ['Tier','<span class="tier-pill tier-'+(r.tier||'fashion')+'">'+(r.tier||'fashion').charAt(0).toUpperCase()+(r.tier||'fashion').slice(1)+'</span>'],
+    ['Resale Signal',r.resale_signal||'']
+  ];
+  document.getElementById('p-rows').innerHTML=rows.map(function(row){ return '<div class="p-row"><span class="p-label">'+row[0]+'</span><span class="p-val">'+row[1]+'</span></div>'; }).join('');
+  document.getElementById('p-tags').innerHTML=(r.style_tags||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
+
+  // Red flags
+  var rfEl=document.getElementById('p-redflag'), rfTxt=document.getElementById('p-redflag-text');
+  if(r.visible_red_flags&&r.visible_red_flags!=='None visible — piece appears consistent with stated quality'&&!r.visible_red_flags.toLowerCase().startsWith('none')){
+    rfTxt.textContent=r.visible_red_flags; rfEl.classList.remove('hidden');
+  } else { rfEl.classList.add('hidden'); }
+
+  // Look for Less
+  var btn=document.getElementById('look-less-btn');
+  (r.tier==='fine'||r.tier==='luxury')?btn.classList.remove('hidden'):btn.classList.add('hidden');
+
+  // Style cards
+  document.getElementById('style-cards').innerHTML=(r.styling_ideas||[]).map(function(s){
+    return '<div class="style-card"><p class="style-occasion">'+(s.occasion||'').toUpperCase()+'</p><p class="style-title">'+s.title+'</p><p class="style-desc">'+s.description+'</p></div>';
+  }).join('');
+
+  // Find It — 3 curated global platforms
+  var st=r.search_terms||{};
+  var platforms=[
+    {name:'Pinterest',sub:'Visual discovery · Global style inspiration',emoji:'📌',url:'https://www.pinterest.com/search/pins/?q='+encodeURIComponent(st.pinterest||r.piece_type)},
+    {name:'1stDibs',sub:'Fine, vintage & luxury — worldwide',emoji:'✦',url:'https://www.1stdibs.com/search/?q='+encodeURIComponent(st.firstdibs||r.piece_type)},
+    {name:'Etsy',sub:'Global independent makers & artisans',emoji:'🛍',url:'https://www.etsy.com/search?q='+encodeURIComponent(st.etsy||r.piece_type)}
+  ];
+  document.getElementById('find-links').innerHTML=platforms.map(function(p){
+    return '<a href="'+p.url+'" target="_blank" rel="noopener" class="find-link"><div><p class="find-link-name">'+p.emoji+' '+p.name+'</p><p class="find-link-sub">'+p.sub+'</p></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8967e" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></a>';
+  }).join('');
+
+  showScreen('results');
+}
+
+function toggleLookLess(){
+  var panel=document.getElementById('look-less-panel'), btn=document.getElementById('look-less-btn');
+  if(!panel.classList.contains('hidden')){ panel.classList.add('hidden'); btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Get This Look for Less'; return; }
+  var r=currentResult&&currentResult.look_for_less; if(!r) return;
+  panel.innerHTML='<p class="look-less-title">Get This Look for Less</p><p class="look-less-sub">Similar aesthetic at a more accessible price point:</p><div class="alt-section"><p class="alt-label">✦ Alternative Stones</p>'+(r.alt_stones||[]).map(function(s){ return '<p class="alt-item">'+s+'</p>'; }).join('')+'</div><div class="alt-section"><p class="alt-label">✦ Alternative Metals</p>'+(r.alt_metals||[]).map(function(s){ return '<p class="alt-item">'+s+'</p>'; }).join('')+'</div><div class="alt-section"><p class="alt-label">✦ Finishes & Techniques</p>'+(r.alt_finishes||[]).map(function(s){ return '<p class="alt-item">'+s+'</p>'; }).join('')+'</div><div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"><p class="alt-label">✦ Where to Source Globally</p><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-top:6px">'+(r.where_to_source||'')+'</p></div>';
+  panel.classList.remove('hidden');
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Hide suggestions';
+}
+
+function showError(title,body){ showScreen('upload'); document.getElementById('err-title').textContent=title; document.getElementById('err-body').textContent=body; document.getElementById('err-display').classList.remove('hidden'); }
+
+// ── VERIFY ──
+async function runVerify(){
+  var claim=(document.getElementById('verify-input').value||'').trim();
+  if(!claim||!currentResult) return;
+  if(!getApiKey()){ alert('Please add your API key — tap the logo 5 times to reveal settings.'); return; }
+  var btn=document.getElementById('verify-btn');
+  btn.disabled=true; btn.textContent='Checking claims…';
+  var resultsEl=document.getElementById('verify-results');
+  resultsEl.classList.add('hidden'); resultsEl.innerHTML='';
+  var r=currentResult;
+  var summary='Piece: '+r.piece_type+'. Metal: '+r.metal+' ('+r.metal_confidence+' confidence). Construction: '+r.construction_method+'. Stones: '+(r.stones||[]).map(function(s){ return s.name+' '+s.cut; }).join(', ')+'. Surface: '+r.surface_treatment+'. Tradition: '+r.craftsmanship_tradition+'. Tier: '+r.tier+'. Red flags: '+r.visible_red_flags+'.';
+  var prompt='You are a jewellery authentication expert helping a buyer evaluate a seller\'s claims against an AI image analysis. Analysis result: '+summary+'. Seller claims: "'+claim+'". Evaluate each distinct claim the seller makes and cross-reference with the analysis. Respond ONLY with valid JSON.\n\n{"claim_breakdown":[{"claim":"specific seller claim","assessment":"supported or questionable or not_supported","evidence":"what the analysis shows vs what was claimed"}],"overall_verdict":"consistent or mostly_consistent or significant_concerns or not_supported","questions_to_ask":[{"question":"specific question to ask the seller"}],"documents_to_request":["document 1","document 2"],"expert_note":"2-3 sentences of honest expert assessment"}';
+  try{
+    var result=await callClaude([{type:"text",text:"Analyse this seller claim."}],prompt,1500);
+    var assessColors={'supported':'badge-supported','questionable':'badge-questionable','not_supported':'badge-not-supported'};
+    var html='';
+    (result.claim_breakdown||[]).forEach(function(c){
+      var cls=assessColors[c.assessment]||'badge-questionable';
+      var label=c.assessment==='not_supported'?'Not Supported':c.assessment.charAt(0).toUpperCase()+c.assessment.slice(1);
+      html+='<div class="claim-row"><div class="claim-row-header"><span class="claim-badge '+cls+'">'+label+'</span><span class="claim-text">'+c.claim+'</span></div><p class="claim-evidence">'+c.evidence+'</p></div>';
+    });
+    html+='<div class="verify-verdict"><p class="verify-verdict-title">Expert Assessment</p><p class="verify-verdict-text">'+(result.expert_note||'')+'</p></div>';
+    if((result.questions_to_ask||[]).length>0){
+      html+='<div class="verify-questions"><p class="verify-q-label">✦ Questions to ask the seller</p>'+(result.questions_to_ask||[]).map(function(q){ return '<p class="verify-q-item">→ '+(q.question||q)+'</p>'; }).join('')+'</div>';
+    }
+    if((result.documents_to_request||[]).length>0){
+      html+='<div class="verify-questions" style="margin-top:14px"><p class="verify-q-label">✦ Documents to request</p>'+(result.documents_to_request||[]).map(function(d){ return '<p class="verify-q-item">→ '+d+'</p>'; }).join('')+'</div>';
+    }
+    html+='<div class="verify-bottom-disclaimer"><strong>Important:</strong> This is a visual analysis only and cannot confirm authenticity. For any significant purchase, always have the piece physically examined by a certified gemologist or independent jeweller. For pieces above €500 / $600 / ₹50,000, in-person professional verification is strongly recommended.</div>';
+    resultsEl.innerHTML=html;
+    resultsEl.classList.remove('hidden');
+  }catch(err){
+    resultsEl.innerHTML='<div class="err-box"><p class="err-title">Check failed</p><p class="err-body">'+err.message+'</p></div>';
+    resultsEl.classList.remove('hidden');
+  }
+  btn.disabled=false; btn.textContent='Check Seller\'s Claims →';
+}
+
+// ── DOWNLOAD SUMMARY ──
+function downloadSummary(){
+  var r=currentResult; if(!r) return;
+  var stones=(r.stones||[]).map(function(s){ return [s.name,s.cut,s.color,s.setting].filter(Boolean).join(', '); }).join('\n  • ');
+  var text=['✦ JewelLens Summary','─────────────────────',
+    'Piece:         '+r.piece_type,
+    'Metal:         '+r.metal+(r.metal_confidence==='low'?' (approx.)':''),
+    'Construction:  '+r.construction_method,
+    'Stone(s):\n  • '+stones,
+    'Style Era:     '+r.style_era,
+    'Tradition:     '+r.craftsmanship_tradition,
+    'Tier:          '+(r.tier.charAt(0).toUpperCase()+r.tier.slice(1)),
+    '─────────────────────',
+    r.summary,'',
+    'Care: '+r.care_tip,'',
+    'Resale: '+r.resale_signal,'',
+    'Generated by JewelLens — jewellens.app'].join('\n');
+  var blob=new Blob([text],{type:'text/plain'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='jewellens_'+(r.piece_type||'piece').replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+  var btn=document.getElementById('copy-summary-btn');
+  btn.classList.add('copied'); btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg> Downloaded!';
+  setTimeout(function(){ btn.classList.remove('copied'); btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Summary (.txt)'; },2500);
+}
+
+// ── SHARE / DOWNLOAD ANALYSIS CARD (4:5 portrait) ──
+function shareCard(){
+  var r=currentResult; if(!r) return;
+  var btn=document.getElementById('share-card-btn');
+  btn.classList.add('generating');
+  btn.querySelector('span').textContent='Generating card…';
+
+  var W=1080, H=1350; // 4:5 portrait — Instagram-ready
+  var canvas=document.createElement('canvas');
+  canvas.width=W; canvas.height=H;
+  var ctx=canvas.getContext('2d');
+
+  function doRender(img){
+    // Background
+    ctx.fillStyle='#f5f0e8'; ctx.fillRect(0,0,W,H);
+
+    // Gold gradient (reused)
+    var goldGrd=ctx.createLinearGradient(0,0,W,0);
+    goldGrd.addColorStop(0,'#a87c28'); goldGrd.addColorStop(1,'#e0b050');
+
+    // Photo — top 60% of card (810px), cover-fit
+    var photoH=810;
+    if(img){
+      var ia=img.naturalWidth/img.naturalHeight, aa=W/photoH, dw,dh,dx,dy;
+      if(ia>aa){ dh=photoH; dw=dh*ia; dx=(W-dw)/2; dy=0; }
+      else{ dw=W; dh=dw/ia; dx=0; dy=(photoH-dh)/2; }
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0,0,W,photoH); ctx.clip();
+      ctx.drawImage(img,dx,dy,dw,dh);
+      ctx.restore();
+    } else {
+      ctx.fillStyle='#ede8df'; ctx.fillRect(0,0,W,photoH);
+      ctx.font='80px serif'; ctx.fillStyle='#c4bab0'; ctx.textAlign='center';
+      ctx.fillText('✦',W/2,photoH/2+28);
+    }
+
+    // Gradient fade — photo to background
+    var fadeGrd=ctx.createLinearGradient(0,photoH-160,0,photoH);
+    fadeGrd.addColorStop(0,'rgba(245,240,232,0)');
+    fadeGrd.addColorStop(1,'rgba(245,240,232,1)');
+    ctx.fillStyle=fadeGrd; ctx.fillRect(0,photoH-160,W,160);
+
+    // Gold divider line
+    ctx.fillStyle=goldGrd; ctx.fillRect(80,photoH+8,W-160,2);
+
+    var y=photoH+70;
+
+    // Piece type
+    ctx.textAlign='center'; ctx.fillStyle='#1e1a16';
+    ctx.font='italic 600 68px Georgia,serif';
+    var pName=(r.piece_type||'');
+    if(ctx.measureText(pName).width>W-120) pName=pName.substring(0,26)+'…';
+    ctx.fillText(pName,W/2,y); y+=52;
+
+    // Tradition (gold)
+    ctx.font='300 30px system-ui,sans-serif';
+    ctx.fillStyle='#a87c28';
+    var trad=(r.craftsmanship_tradition||'');
+    if(ctx.measureText(trad).width>W-160) trad=trad.substring(0,42)+'…';
+    ctx.fillText(trad,W/2,y); y+=48;
+
+    // 3 fact rows
+    var facts=[
+      ['METAL',(r.metal||'')+(r.metal_confidence==='low'?' (approx.)':'')],
+      ['STONES',r.stones&&r.stones.length?r.stones[0].name+(r.stones.length>1?' + '+(r.stones.length-1)+' more':''):'None'],
+      ['ERA & TIER',(r.style_era||'')+'  ·  '+((r.tier||'fashion').charAt(0).toUpperCase()+(r.tier||'fashion').slice(1))]
+    ];
+    facts.forEach(function(fact){
+      // Row background
+      ctx.fillStyle='rgba(253,250,245,0.75)';
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(80,y,W-160,58,8);
+      else ctx.rect(80,y,W-160,58);
+      ctx.fill();
+      // Label
+      ctx.font='500 22px system-ui,sans-serif';
+      ctx.fillStyle='#9a8870'; ctx.textAlign='left';
+      ctx.fillText(fact[0],106,y+36);
+      // Value
+      ctx.font='400 26px system-ui,sans-serif';
+      ctx.fillStyle='#1e1a16'; ctx.textAlign='right';
+      var val=(fact[1]||'');
+      if(ctx.measureText(val).width>480) val=val.substring(0,34)+'…';
+      ctx.fillText(val,W-106,y+36);
+      y+=66;
+    });
+
+    // Branding footer
+    ctx.fillStyle=goldGrd; ctx.fillRect(0,H-72,W,72);
+    ctx.fillStyle='#fff'; ctx.textAlign='left';
+    ctx.font='bold 34px system-ui,sans-serif';
+    ctx.fillText('✦ JewelLens',56,H-38);
+    ctx.font='22px system-ui,sans-serif';
+    ctx.fillStyle='rgba(255,255,255,0.72)';
+    ctx.fillText('jewellens.app  ·  Every piece has a story.',56,H-14);
+  }
+
+  function afterRender(){
+    btn.classList.remove('generating');
+    btn.querySelector('span').textContent=_canShare?'Share Analysis Card':'Download Analysis Card';
+  }
+
+  var filename='jewellens_'+(r.piece_type||'piece').replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.jpg';
+
+  function tryShareOrDownload(){
+    if(_canShare){
+      canvas.toBlob(function(blob){
+        var file=new File([blob],filename,{type:'image/jpeg'});
+        try{
+          if(navigator.canShare({files:[file]})){
+            navigator.share({files:[file],title:'JewelLens Analysis',text:'✦ '+(r.piece_type||'Jewellery piece')+' — identified with JewelLens'})
+              .then(function(){ afterRender(); })
+              .catch(function(e){ if(e.name!=='AbortError') fallbackDownload(canvas,filename); afterRender(); });
+          } else { fallbackDownload(canvas,filename); afterRender(); }
+        }catch(e){ fallbackDownload(canvas,filename); afterRender(); }
+      },'image/jpeg',0.92);
+    } else {
+      fallbackDownload(canvas,filename); afterRender();
+    }
+  }
+
+  var src=document.getElementById('prev-img').src||'';
+  if(src){
+    var img=new Image(); img.crossOrigin='anonymous';
+    img.onload=function(){ doRender(img); tryShareOrDownload(); };
+    img.onerror=function(){ doRender(null); tryShareOrDownload(); };
+    img.src=src;
+  } else { doRender(null); tryShareOrDownload(); }
+}
+
+function fallbackDownload(canvas,filename){
+  var a=document.createElement('a');
+  a.href=canvas.toDataURL('image/jpeg',0.92);
+  a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ── DAILY STONE DATA ──
+var ZODIAC_ELEMENTS={'Aries':'Fire','Leo':'Fire','Sagittarius':'Fire','Taurus':'Earth','Virgo':'Earth','Capricorn':'Earth','Gemini':'Air','Libra':'Air','Aquarius':'Air','Cancer':'Water','Scorpio':'Water','Pisces':'Water'};
+var DAY_DATA=[
+  {planet:'Sun',stones:{Fire:{stone:'Sunstone',emoji:'🌞',color:'#f4900c',why:'Fire signs amplify the Sun\'s vital energy through Sunstone, igniting confidence and creative power.',wear:'Wear as a pendant or statement ring — let it catch the light.'},Earth:{stone:'Citrine',emoji:'🌟',color:'#f0a500',why:'Earth signs channel the Sun\'s abundance through Citrine, drawing clarity and prosperity toward practical goals.',wear:'Wear on your dominant hand as a ring or bracelet.'},Air:{stone:'Yellow Sapphire',emoji:'✨',color:'#e8c200',why:'Air signs access the Sun\'s wisdom through Yellow Sapphire, sharpening intellect and expanding vision.',wear:'Set in gold as earrings or pendant — keeps the mind luminous.'},Water:{stone:'Pearl',emoji:'🌙',color:'#f0f0e0',why:'Water signs receive the Sun\'s warmth through Pearl, balancing emotion with luminous clarity.',wear:'Wear as a single strand or stud earrings for gentle radiance.'}}},
+  {planet:'Moon',stones:{Fire:{stone:'Red Carnelian',emoji:'🔴',color:'#c0392b',why:'Fire signs harness the Moon\'s intuition through Carnelian, balancing bold energy with emotional intelligence.',wear:'Wear on your left wrist — keep instincts sharp without losing fire.'},Earth:{stone:'Moonstone',emoji:'🌛',color:'#b8c8d4',why:'Earth signs soften into lunar rhythms through Moonstone, opening intuition within a grounded foundation.',wear:'Set in silver, worn touching your skin.'},Air:{stone:'Aquamarine',emoji:'💧',color:'#4fa8c4',why:'Air signs flow with the Moon\'s tides through Aquamarine, bringing calm clarity to communication.',wear:'Wear as earrings or a delicate necklace.'},Water:{stone:'Pearl',emoji:'🌊',color:'#f0f0e0',why:'Water signs resonate most deeply with the Moon through Pearl — your most auspicious stone today.',wear:'Layer as a necklace or wear as studs; Pearl on Monday is deeply powerful for water signs.'}}},
+  {planet:'Mars',stones:{Fire:{stone:'Ruby',emoji:'❤️',color:'#c0392b',why:'Fire signs align perfectly with Mars through Ruby — the warrior\'s stone amplifies courage and unstoppable momentum.',wear:'Wear as a statement ring on your right index finger.'},Earth:{stone:'Red Jasper',emoji:'🏺',color:'#8b3a2a',why:'Earth signs channel Mars\'s drive through Red Jasper, turning ambition into steady, grounded action.',wear:'Wear as a bracelet on your dominant wrist.'},Air:{stone:'Garnet',emoji:'🍒',color:'#8b0000',why:'Air signs sharpen Mars\'s fire through Garnet, cutting through mental hesitation with decisiveness.',wear:'As earrings or pendant — focus the energy upward.'},Water:{stone:'Coral',emoji:'🪸',color:'#e8562a',why:'Water signs bridge emotion with action through Coral today, gaining courage without recklessness.',wear:'Wear close to the body as a bracelet or pendant.'}}},
+  {planet:'Mercury',stones:{Fire:{stone:'Amber',emoji:'🌿',color:'#d4700a',why:'Fire signs channel Mercury\'s gift through Amber, adding warm storytelling power to natural expressiveness.',wear:'Wear as a pendant near the throat — Mercury\'s communication zone.'},Earth:{stone:'Malachite',emoji:'🍃',color:'#27ae60',why:'Earth signs ground Mercury\'s quick energy through Malachite, turning information into practical wisdom.',wear:'As a bracelet on your writing hand.'},Air:{stone:'Emerald',emoji:'💚',color:'#1e8449',why:'Air signs are Mercury\'s natural home — Emerald amplifies brilliance, eloquence and analytical depth today.',wear:'Set in gold as a ring on your right hand or earrings.'},Water:{stone:'Green Tourmaline',emoji:'🌱',color:'#196f3d',why:'Water signs translate deep feelings into clear words through Green Tourmaline today.',wear:'As a pendant near the heart.'}}},
+  {planet:'Jupiter',stones:{Fire:{stone:'Yellow Sapphire',emoji:'⭐',color:'#e8c200',why:'Fire signs receive Jupiter\'s full blessing through Yellow Sapphire — expansion, luck and recognition flow powerfully.',wear:'Set in gold on your right index finger for maximum benefit.'},Earth:{stone:"Tiger's Eye",emoji:'🐯',color:'#c8920a',why:'Earth signs channel Jupiter\'s abundance through Tiger\'s Eye, bringing grounded prosperity and sharp acumen.',wear:'As a bracelet on your dominant wrist throughout the day.'},Air:{stone:'Lapis Lazuli',emoji:'🔵',color:'#1a3a8f',why:'Air signs access Jupiter\'s wisdom through Lapis Lazuli — the stone of higher knowledge and philosophical vision.',wear:'As earrings or pendant to elevate every conversation.'},Water:{stone:'Amethyst',emoji:'💜',color:'#7d3c98',why:'Water signs receive Jupiter\'s spiritual expansion through Amethyst, deepening intuition and opening higher understanding.',wear:'As earrings or a pendant at crown level.'}}},
+  {planet:'Venus',stones:{Fire:{stone:'Opal',emoji:'🌈',color:'#e8a0c0',why:'Fire signs express Venus most brilliantly through Opal — its colour play mirrors your dynamic, passionate nature.',wear:'As a statement ring or pendant — Opal loves to be seen on Venus\'s day.'},Earth:{stone:'Rose Quartz',emoji:'🌸',color:'#f4c2c2',why:'Earth signs receive Venus\'s love through Rose Quartz, softening practicality with genuine warmth.',wear:'As a bracelet or pendant close to the heart.'},Air:{stone:'White Sapphire',emoji:'💍',color:'#e8e8f0',why:'Air signs channel Venus\'s grace through White Sapphire — intellectual beauty and effortless social charm.',wear:'As earrings or a delicate ring.'},Water:{stone:'Aquamarine',emoji:'🌊',color:'#4fa8c4',why:'Water signs align deeply with Venus through Aquamarine — emotional love flows with crystalline clarity.',wear:'As a layered necklace; let it be visible and invite connection.'}}},
+  {planet:'Saturn',stones:{Fire:{stone:'Amethyst',emoji:'🔮',color:'#7d3c98',why:'Fire signs need Saturn\'s discipline most — Amethyst cools impulsive energy and brings patience for long-term plans.',wear:'As a ring on your left hand — a reminder to pause before acting.'},Earth:{stone:'Blue Sapphire',emoji:'💎',color:'#1a3a9f',why:'Earth signs are Saturn\'s natural allies — Blue Sapphire amplifies focus, integrity and steady discipline.',wear:'Set in silver on your middle finger — Saturn\'s traditional position.'},Air:{stone:'Black Tourmaline',emoji:'🖤',color:'#2c3e50',why:'Air signs ground scattered mental energy through Black Tourmaline today — filtering distractions and protecting clarity.',wear:'As a bracelet or in a pocket — its grounding works through proximity.'},Water:{stone:'Labradorite',emoji:'🌌',color:'#5d6d7e',why:'Water signs transform Saturn\'s lessons through Labradorite — turning deep inner work into spiritual strength.',wear:'As a pendant — its iridescent light reminds you that depth contains brilliance.'}}}
+];
+var DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function initDailyStone(){
+  var now=new Date();
+  var label=DAY_NAMES[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+  document.getElementById('ds-date-label').textContent=label;
+  if(_confirmedSign){ showDailyStone(_confirmedSign); }
+  else{ document.getElementById('ds-sign-picker').classList.add('visible'); }
+}
+
+function selectZodiac(el,name){
+  document.querySelectorAll('.zodiac-chip').forEach(function(c){ c.classList.remove('selected'); });
+  el.classList.add('selected'); _selectedSign=name;
+  var btn=document.getElementById('ds-pick-btn'); btn.disabled=false; btn.textContent='Show My Stone for Today ✦';
+}
+
+function confirmSign(){
+  if(!_selectedSign) return;
+  _confirmedSign=_selectedSign;
+  try{ _set('jl_sign',_confirmedSign); }catch(e){}
+  document.getElementById('ds-sign-picker').classList.remove('visible');
+  showDailyStone(_confirmedSign);
+}
+
+function showDailyStone(sign){
+  var day=new Date().getDay();
+  var dayData=DAY_DATA[day];
+  var element=ZODIAC_ELEMENTS[sign]||'Earth';
+  var stone=dayData.stones[element];
+  var el=document.getElementById('ds-result');
+  el.innerHTML='<div class="ds-card"><div class="ds-stone-circle" style="background:'+stone.color+'22;border:2px solid '+stone.color+'40"><span style="font-size:36px">'+stone.emoji+'</span></div><p class="ds-stone-name">'+stone.stone+'</p><p class="ds-stone-meta">'+sign+' · '+element+' sign · '+dayData.planet+'\'s day</p><p class="ds-stone-why">'+stone.why+'</p></div><div class="ds-section"><p class="ds-section-label">✦ How to wear it today</p><p class="ds-section-text">'+stone.wear+'</p></div><div class="ds-section"><p class="ds-section-label">✦ Today\'s ruling energy</p><p class="ds-section-text"><strong>'+dayData.planet+'</strong> governs '+DAY_NAMES[day]+'. '+getPlanetNote(dayData.planet)+'</p></div><p class="ds-affirmation">"'+getAffirmation(stone.stone,sign)+'"</p><button class="ds-change-btn" onclick="changeSign()">Change my sign</button>';
+  el.classList.remove('hidden');
+}
+
+function getPlanetNote(planet){
+  var notes={'Sun':'Focus on self-expression, visibility, and creative confidence today.','Moon':'Trust your intuition. Emotional intelligence is your superpower today.','Mars':'Channel energy into action. This is a day for courage and momentum.','Mercury':'Communication and sharp thinking are favoured. Say what needs to be said.','Jupiter':'Expansion is in the air. Think big, be generous, and expect good things.','Venus':'Beauty, connection, and love are heightened. A good day for relationships.','Saturn':'Discipline and patience will be rewarded. Focus on what truly matters.'};
+  return notes[planet]||'';
+}
+
+function getAffirmation(stone,sign){
+  var affirmations={'Ruby':'I move forward with the courage of a thousand fires.','Sunstone':'I radiate warmth and I attract what I deserve.','Citrine':'Abundance flows through me when I stay grounded and clear.','Yellow Sapphire':'Wisdom finds me when I open to the bigger picture.','Opal':'I contain multitudes, and every facet of me is beautiful.','Pearl':'My depth is my strength. I meet the world with quiet power.','Emerald':'My words carry truth and my mind moves with elegance.','Amethyst':'In stillness, I find the answers I have been seeking.','Moonstone':'I trust the cycles. My intuition knows the way.','Aquamarine':'I flow with clarity and speak with calm conviction.','Blue Sapphire':'I build what lasts. My discipline is my gift.','Rose Quartz':'Love begins within me and flows outward without condition.','Carnelian':'I act with purpose. My energy is focused and alive.','Garnet':'I cut through what does not serve me and move with precision.','Coral':'I feel deeply and act with heart. That is my strength.','Amber':'My story is worth telling. I speak it with warmth today.','Malachite':'I see the pattern. I act with elegant precision.','Lapis Lazuli':'I seek truth and I trust the wisdom I have earned.','Labradorite':'Beneath my surface lies a brilliance that reveals itself in its own time.','Black Tourmaline':"I protect my energy and give only what is mine to give.",'Red Jasper':'I am steady. I am strong. I am here.',"Tiger's Eye":'I see clearly what matters and I move toward it without hesitation.','Green Tourmaline':'What I feel, I can now say. My heart and my voice are aligned.','White Sapphire':'I carry beauty lightly and grace comes naturally to me.'};
+  return affirmations[stone]||'I wear my stone today as a reminder of who I am becoming.';
+}
+
+function changeSign(){
+  _confirmedSign=null; try{ _set('jl_sign',''); }catch(e){}
+  _selectedSign=null;
+  document.querySelectorAll('.zodiac-chip').forEach(function(c){ c.classList.remove('selected'); });
+  document.getElementById('ds-sign-picker').classList.add('visible');
+  document.getElementById('ds-result').classList.add('hidden');
+  var btn=document.getElementById('ds-pick-btn'); btn.disabled=true; btn.textContent='Show Today\'s Stone ✦';
+}
+
+// ── COMPARE ──
+function handleCompareFile(slot,file){
+  if(!file) return;
+  var obj=slot==='a'?compareA:compareB;
+  var r=new FileReader();
+  r.onload=function(e){
+    compressImage(e.target.result,file.type,function(compressed){
+      obj.b64=compressed.split(',')[1]; obj.mime='image/jpeg'; obj.preview=compressed;
+      var slotEl=document.getElementById('cslot-'+slot);
+      slotEl.classList.add('has-img');
+      slotEl.innerHTML='<img src="'+compressed+'" alt="Piece '+slot.toUpperCase()+'"><input type="file" id="cfi-'+slot+'" accept="image/*" style="display:none" onchange="handleCompareFile(\''+slot+'\',this.files[0])">';
+      slotEl.onclick=function(){ document.getElementById('cfi-'+slot).click(); };
+      updateCompareBtn();
+    });
+  };
+  r.readAsDataURL(file);
+}
+function updateCompareBtn(){
+  var btn=document.getElementById('compare-btn');
+  var ta=document.getElementById('ctype-a').value, tb=document.getElementById('ctype-b').value;
+  if(compareA.b64&&compareB.b64&&ta&&tb){ btn.disabled=false; btn.textContent='Compare These Two Pieces →'; }
+  else if(compareA.b64&&compareB.b64){ btn.disabled=true; btn.textContent='Now select types for both pieces'; }
+  else{ btn.disabled=true; btn.textContent='Upload both pieces to compare'; }
+}
+async function runComparison(){
+  if(!compareA.b64||!compareB.b64) return;
+  if(!getApiKey()){ alert('Please add your API key — tap the logo 5 times to reveal settings.'); return; }
+  var ta=document.getElementById('ctype-a').value||'piece', tb=document.getElementById('ctype-b').value||'piece';
+  var btn=document.getElementById('compare-btn'); btn.disabled=true; btn.textContent='Comparing…';
+  document.getElementById('compare-results').classList.add('hidden');
+  document.getElementById('compare-err').classList.add('hidden');
+  var prompt='You are a world-class jewellery expert with encyclopaedic knowledge of all global jewellery traditions. Compare the two pieces shown. Image 1 is a '+ta+'. Image 2 is a '+tb+'. Analyse both and respond ONLY with valid JSON.\n\n{"piece_a":{"name":"descriptive name","metal":"metal","key_stones":"stones or None","style_era":"era","tradition":"specific tradition","tier":"fashion or fine or luxury","summary":"1-2 sentences"},"piece_b":{"name":"descriptive name","metal":"metal","key_stones":"stones or None","style_era":"era","tradition":"specific tradition","tier":"fashion or fine or luxury","summary":"1-2 sentences"},"comparison":{"craftsmanship_winner":"A or B","versatility_winner":"A or B","value_winner":"A or B","occasion_fit":{"piece_a":"best occasion","piece_b":"best occasion"},"verdict":"3-4 sentences comparing both — quality, style, wearability, who each suits. Be direct and opinionated."}}';
+  try{
+    var imgPayload=[{type:"image",source:{type:"base64",media_type:compareA.mime,data:compareA.b64}},{type:"image",source:{type:"base64",media_type:compareB.mime,data:compareB.b64}}];
+    var r=await callClaude(imgPayload,prompt,2000);
+    var pa=r.piece_a, pb=r.piece_b, cmp=r.comparison;
+    function tc(tier){ return tier==='luxury'?'tier-luxury':tier==='fine'?'tier-fine':'tier-fashion'; }
+    function wb(label){ return '<span style="display:inline-block;background:var(--gold-dim);color:var(--gold);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:600;margin:2px 2px 4px 0">✦ '+label+'</span>'; }
+    document.getElementById('compare-input-section').classList.add('hidden');
+    document.getElementById('compare-results').innerHTML=
+      '<div class="compare-cols">'
+      +'<div>'
+        +'<img class="compare-col-img" src="'+compareA.preview+'" alt="Piece A">'
+        +'<p class="compare-col-title">'+pa.name+'</p>'
+        +'<p class="compare-col-meta">'+pa.metal+' · '+pa.key_stones+'<br>'+pa.style_era+'<br><span class="tier-pill '+tc(pa.tier)+'">'+pa.tier+'</span></p>'
+        +(cmp.craftsmanship_winner==='A'?wb('Best Craft'):'')+(cmp.versatility_winner==='A'?wb('Most Versatile'):'')+(cmp.value_winner==='A'?wb('Best Value'):'')
+        +'<p style="font-size:11px;color:var(--text3);margin-top:8px">Best for: '+cmp.occasion_fit.piece_a+'</p>'
+        +'<p style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.5">'+pa.summary+'</p>'
+      +'</div>'
+      +'<div>'
+        +'<img class="compare-col-img" src="'+compareB.preview+'" alt="Piece B">'
+        +'<p class="compare-col-title">'+pb.name+'</p>'
+        +'<p class="compare-col-meta">'+pb.metal+' · '+pb.key_stones+'<br>'+pb.style_era+'<br><span class="tier-pill '+tc(pb.tier)+'">'+pb.tier+'</span></p>'
+        +(cmp.craftsmanship_winner==='B'?wb('Best Craft'):'')+(cmp.versatility_winner==='B'?wb('Most Versatile'):'')+(cmp.value_winner==='B'?wb('Best Value'):'')
+        +'<p style="font-size:11px;color:var(--text3);margin-top:8px">Best for: '+cmp.occasion_fit.piece_b+'</p>'
+        +'<p style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.5">'+pb.summary+'</p>'
+      +'</div>'
+      +'</div>'
+      +'<div class="compare-verdict"><p class="compare-verdict-title">The Verdict</p><p class="compare-verdict-text">'+cmp.verdict+'</p></div>'
+      +'<button onclick="resetComparison()" style="width:100%;margin-top:16px;padding:12px;border-radius:var(--radius);background:none;border:1px solid var(--border2);color:var(--text3);font-size:13px;cursor:pointer;font-family:var(--font-body)">← Compare Different Pieces</button>';
+    document.getElementById('compare-results').classList.remove('hidden');
+  }catch(err){
+    document.getElementById('compare-err-title').textContent='Comparison Failed';
+    document.getElementById('compare-err-body').textContent=err.message;
+    document.getElementById('compare-err').classList.remove('hidden');
+    btn.disabled=false; btn.textContent='Compare These Two Pieces →';
+  }
+}
+
+function resetComparison(){
+  compareA={b64:null,mime:null,preview:null}; compareB={b64:null,mime:null,preview:null};
+  document.getElementById('compare-input-section').classList.remove('hidden');
+  document.getElementById('compare-results').classList.add('hidden');
+  document.getElementById('compare-err').classList.add('hidden');
+  ['a','b'].forEach(function(s){
+    var sl=document.getElementById('cslot-'+s);
+    sl.classList.remove('has-img');
+    sl.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a8967e" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span class="compare-slot-label">Piece '+s.toUpperCase()+'</span><span class="compare-slot-hint">Tap to upload</span><input type="file" id="cfi-'+s+'" accept="image/*" style="display:none" onchange="handleCompareFile(\''+s+'\',this.files[0])">';
+    sl.onclick=function(){ document.getElementById('cfi-'+s).click(); };
+  });
+  document.getElementById('ctype-a').value=''; document.getElementById('ctype-b').value='';
+  updateCompareBtn();
+}
+
+// ── COLLECTIONS ──
+var COL_COLORS=['#a87c28','#5d8a6e','#6b7abf','#a0607a','#4a7c7c','#8b6914'];
+function getCollections(){ return _collections; }
+function getSavedItems(){ return _savedItems; }
+function saveCollections(c){ _collections=c; try{ _set('jl_cols',JSON.stringify(c)); }catch(e){} }
+function saveSavedItems(i){ _savedItems=i; try{ _set('jl_items',JSON.stringify(i)); }catch(e){} }
+function createCollection(){
+  var name=document.getElementById('new-col-name').value.trim(); if(!name) return;
+  var cols=getCollections();
+  cols.push({id:Date.now().toString(),name:name,color:COL_COLORS[cols.length%COL_COLORS.length]});
+  saveCollections(cols); document.getElementById('new-col-name').value=''; renderModalCollections();
+}
+function openSaveModal(){
+  if(!currentResult) return;
+  var cols=getCollections();
+  if(cols.length===0){ cols=[{id:'default',name:'My Pieces',color:COL_COLORS[0]}]; saveCollections(cols); }
+  document.getElementById('save-modal').classList.add('open'); renderModalCollections();
+}
+function closeSaveModal(){ document.getElementById('save-modal').classList.remove('open'); }
+function renderModalCollections(){
+  var cols=getCollections(), items=getSavedItems();
+  document.getElementById('modal-collection-list').innerHTML=cols.map(function(c){
+    var n=items.filter(function(i){ return i.collectionId===c.id; }).length;
+    return '<div class="collection-item" onclick="saveToCollection(\''+c.id+'\')"><div class="collection-dot" style="background:'+c.color+'"></div><span class="collection-name">'+c.name+'</span><span class="collection-count">'+n+' piece'+(n!==1?'s':'')+'</span></div>';
+  }).join('');
+}
+function saveToCollection(colId){
+  if(!currentResult) return;
+  var items=getSavedItems();
+  var src=document.getElementById('prev-img').src||'';
+  items.push({id:Date.now().toString(),collectionId:colId,result:currentResult,imageDataUrl:src.startsWith('data:')?src:'',imageUrl:src.startsWith('http')?src:'',savedAt:new Date().toISOString()});
+  saveSavedItems(items); closeSaveModal();
+  var btn=document.getElementById('save-btn');
+  btn.querySelector('svg').setAttribute('fill','#a87c28'); btn.querySelector('svg').setAttribute('stroke','#a87c28');
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1e1a16;color:#fff;padding:8px 18px;border-radius:99px;font-size:12px;z-index:300;opacity:0;transition:opacity .2s;white-space:nowrap';
+  t.textContent='Saved to collection ✓'; document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='1'; },10);
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },2200);
+}
+function renderSavedScreen(){
+  var cols=getCollections(), items=getSavedItems();
+  var tabsEl=document.getElementById('collection-tabs'), gridEl=document.getElementById('saved-grid'), emptyEl=document.getElementById('saved-empty');
+  var activeColl=tabsEl.dataset.active||'all';
+  tabsEl.innerHTML='<div class="collection-tab'+(activeColl==='all'?' active':'')+'" onclick="filterSaved(\'all\')">All ('+items.length+')</div>'+cols.map(function(c){ var n=items.filter(function(i){ return i.collectionId===c.id; }).length; return '<div class="collection-tab'+(activeColl===c.id?' active':'')+'" onclick="filterSaved(\''+c.id+'\')" style="'+(activeColl===c.id?'background:'+c.color+';border-color:'+c.color+';color:#fff':'')+'">'+c.name+' ('+n+')</div>'; }).join('');
+  var filtered=activeColl==='all'?items:items.filter(function(i){ return i.collectionId===activeColl; });
+  if(!filtered.length){ gridEl.innerHTML=''; emptyEl.classList.remove('hidden'); return; }
+  emptyEl.classList.add('hidden');
+  gridEl.innerHTML=filtered.map(function(item){
+    var r=item.result;
+    var imgHtml=item.imageDataUrl?'<img class="saved-card-img" src="'+item.imageDataUrl+'" alt="">':item.imageUrl?'<img class="saved-card-img" src="'+item.imageUrl+'" alt="">':'<div class="saved-card-img-placeholder">💍</div>';
+    return '<div class="saved-card" onclick="viewSavedItem(\''+item.id+'\')">'+imgHtml+'<div class="saved-card-body"><div class="saved-card-name">'+r.piece_type+'</div><div class="saved-card-meta">'+r.metal+' · '+r.tier+'</div></div></div>';
+  }).join('');
+}
+function filterSaved(id){ document.getElementById('collection-tabs').dataset.active=id; renderSavedScreen(); }
+function viewSavedItem(id){
+  var item=getSavedItems().find(function(i){ return i.id===id; }); if(!item) return;
+  currentResult=item.result;
+  var prev=document.getElementById('prev-img'); prev.src=item.imageDataUrl||item.imageUrl||'';
+  document.getElementById('badge-cat').textContent=item.result.piece_type||'';
+  switchNav('analyse'); renderResults(item.result);
+}
+
+// ── INIT ──
+try{ document.getElementById('ctype-a').addEventListener('change',updateCompareBtn); }catch(e){}
+try{ document.getElementById('ctype-b').addEventListener('change',updateCompareBtn); }catch(e){}
+
+renderUsageBar();
+</script>
+</body>
+</html>
