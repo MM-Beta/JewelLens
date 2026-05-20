@@ -975,7 +975,7 @@ function resetApp(){
 // ── API CALL ──
 async function callClaude(imagePayload,prompt,maxTokens){
   maxTokens=maxTokens||3000;
-  var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
+  var res=await fetch("/api/analyse",{method:"POST",
     headers:{'Content-Type':'application/json','x-api-key':getApiKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:maxTokens,
       messages:[{role:"user",content:[...imagePayload,{type:"text",text:prompt}]}]})});
