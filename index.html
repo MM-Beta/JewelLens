@@ -976,7 +976,7 @@ function resetApp(){
 async function callClaude(imagePayload,prompt,maxTokens){
   maxTokens=maxTokens||3000;
   var res=await fetch("/api/analyse",{method:"POST",
-    headers:{'Content-Type':'application/json','x-api-key':getApiKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:maxTokens,
       messages:[{role:"user",content:[...imagePayload,{type:"text",text:prompt}]}]})});
   if(!res.ok){ var e=await res.json().catch(function(){ return null; }); throw new Error((e&&e.error&&e.error.message?e.error.message:'API error')+' ('+res.status+')'); }
@@ -991,7 +991,7 @@ async function callClaude(imagePayload,prompt,maxTokens){
 // ── ANALYSIS ──
 function startAnalysis(){
   if(!selectedFile||!selectedType) return;
-  if(!getApiKey()){ document.getElementById('settings-panel').classList.add('open'); showError('API Key Required','Please add your Anthropic API key — tap the logo 5 times to reveal the settings panel.'); return; }
+  // api key not needed with proxy
   if(getUsageCount()>=FREE_LIMIT&&!_ownerMode&&!_betaMode){ renderPaywallPricing(); showScreen('paywall'); return; }
   try{ document.getElementById('rate-up').classList.remove('rated'); document.getElementById('rate-down').classList.remove('rated'); }catch(e){}
   document.getElementById('analyzing-type').textContent=selectedType;
@@ -1106,7 +1106,7 @@ function showError(title,body){ showScreen('upload'); document.getElementById('e
 async function runVerify(){
   var claim=(document.getElementById('verify-input').value||'').trim();
   if(!claim||!currentResult) return;
-  if(!getApiKey()){ alert('Please add your API key — tap the logo 5 times to reveal settings.'); return; }
+  // api key not needed with proxy
   var btn=document.getElementById('verify-btn');
   btn.disabled=true; btn.textContent='Checking claims…';
   var resultsEl=document.getElementById('verify-results');
@@ -1394,7 +1394,7 @@ function updateCompareBtn(){
 }
 async function runComparison(){
   if(!compareA.b64||!compareB.b64) return;
-  if(!getApiKey()){ alert('Please add your API key — tap the logo 5 times to reveal settings.'); return; }
+  // api key not needed with proxy
   var ta=document.getElementById('ctype-a').value||'piece', tb=document.getElementById('ctype-b').value||'piece';
   var btn=document.getElementById('compare-btn'); btn.disabled=true; btn.textContent='Comparing…';
   document.getElementById('compare-results').classList.add('hidden');
