@@ -1034,6 +1034,12 @@ function showNotJewellery(message){
 
 function renderResults(r){
   currentResult=r;
+
+// Reset Look for Less on every new analysis
+var _llb = document.getElementById('look-less-btn');
+var _llp = document.getElementById('look-less-panel');
+if(_llb) _llb.classList.add('hidden');
+if(_llp){ _llp.classList.add('hidden'); _llp.innerHTML=''; }
   document.getElementById('badge-type').textContent=r.piece_type||'';
   document.getElementById('p-summary').textContent=r.summary||'';
   document.getElementById('p-care').textContent=r.care_tip||'';
