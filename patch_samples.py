@@ -27,7 +27,7 @@ else:
 
 # 2. HTML
 HTML_MARKER = '  <div class="usage-bar">'
-if 'sample-section' in html:
+if 'sample-tile' in html:
     print("HTML already patched.")
 else:
     pos = html.find(HTML_MARKER)
