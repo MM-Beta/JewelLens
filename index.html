@@ -1141,7 +1141,7 @@ function startAnalysis(){
 }
 
 async function analyzeJewellery(productType){
-  window.lastImageBase64 = productType;
+  window.lastImageBase64 = selectedBase64;
   window.lastImageType   = ('image/jpeg') || 'image/jpeg';
 
   var userCtx=(document.getElementById('piece-context').value||'').trim();
