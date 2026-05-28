@@ -1709,12 +1709,15 @@ function runFollowUp() {
   btn.textContent = 'Asking…';
   if (ansBox) ansBox.classList.remove('visible');
 
-  var isVendor = (label === '✦ Vendor brief');
-  var maxTok   = isVendor ? 1000 : 800;
+  var isVendor   = (label === '✦ Vendor brief');
+  var isStoneAlt = (label === 'Stone alternatives');
+  var maxTok     = isVendor ? 1000 : 800;
 
   var instructions = isVendor
     ? 'You are a senior jewellery trade buyer. Using the piece analysis provided, write one concise paragraph (4-6 sentences) suitable for forwarding to a manufacturer or supplier. Include: exact piece type, construction method, materials with quality markers, craftsmanship tradition if identifiable, and commercial tier. Include any specific requirements the user mentions. Use professional B2B trade language only. No consumer-facing styling language.'
-    : 'You are a jewellery expert. Answer only the specific question asked, using the piece analysis provided. Be concise (3-5 sentences), direct, and factual. Do not repeat the full analysis.';
+    : isStoneAlt
+      ? 'You are a jewellery designer and gemologist. Based on the piece analysis, suggest 3-4 stones that would work as genuine design alternatives in this piece — not cheaper substitutes, but stones that complement the setting style, metal colour, and craftsmanship tradition. Consider colour harmony, hardness suitability for the construction method, and visual character. Each suggestion should feel like a deliberate design choice. Name each stone, describe why it works aesthetically, and note any practical consideration for the setter.'
+      : 'You are a jewellery expert. Answer only the specific question asked, using the piece analysis provided. Be concise (3-5 sentences), direct, and factual. Do not repeat the full analysis.';
 
   var ctx    = window.lastAnalysis ? 'Piece analysis:\n' + JSON.stringify(window.lastAnalysis) + '\n\n' : '';
   var prompt = instructions + '\n\n' + ctx + 'Question: ' + q + '\n\nRespond with valid JSON only in this exact format: {"answer":"your response here"}';
