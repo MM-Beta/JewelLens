@@ -30,11 +30,11 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
 .app { width: 100%; max-width: 420px; padding: 0 20px; }
 .hidden { display: none !important; }
 .spacer { height: 16px; }
-.section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--text3); margin-bottom: 10px; text-transform: uppercase; }
+.section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--gold-dark); margin-bottom: 10px; text-transform: uppercase; }
 .gold-word { color: var(--gold); }
 
 /* ── HERO ── */
-.hero { text-align: center; padding: 48px 0 24px; position: relative; }
+.hero { text-align: center; padding: 28px 0 16px; position: relative; }
 .hero-logo { display: flex; align-items: center; justify-content: center; gap: 9px; margin-bottom: 14px; }
 .logo-jewel { font-family: var(--font-display); font-size: 40px; font-weight: 500; color: var(--text); letter-spacing: .01em; line-height: 1; }
 .logo-lens { font-family: var(--font-display); font-size: 40px; font-weight: 500; color: var(--gold); letter-spacing: .01em; line-height: 1; }
@@ -355,7 +355,7 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
 
 /* Sample strip */
 .sample-section{margin-bottom:20px;}
-.sample-strip-label{font-size:10px;font-weight:500;letter-spacing:.14em;color:var(--text3);margin-bottom:10px;text-transform:uppercase;}
+.sample-strip-label{font-size:10px;font-weight:500;letter-spacing:.14em;color:var(--gold-dark);margin-bottom:10px;text-transform:uppercase;}
 .sample-strip{display:flex;gap:8px;}
 .sample-tile{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:border-color .15s;}
 .sample-tile:hover{border-color:var(--gold);}
@@ -367,7 +367,7 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
 
 /* Context box */
 .context-wrap{margin-top:12px;}
-.context-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.context-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:6px;}
 .context-optional{font-weight:400;letter-spacing:0;text-transform:none;color:var(--text3);}
 .context-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font-body);font-size:12px;color:var(--text);line-height:1.6;resize:none;transition:border-color .2s;height:62px;}
 .context-textarea:focus{outline:none;border-color:var(--gold);}
@@ -394,7 +394,6 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
     <p class="hero-eyebrow">AI Jewellery Intelligence</p>
     <h1 class="hero-headline">Every piece has a <span class="story-word">story.</span></h1>
     <p class="hero-sub">Upload any jewellery photo and discover its metal, stones, style era — and exactly how to wear it.</p>
-    <div class="hero-divider"></div>
   </div>
 
   <div class="settings-panel" id="settings-panel">
@@ -439,10 +438,6 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
     </div>
     <p class="sample-explore-note">See what JewelLens can identify — no upload needed</p>
   </div>
-  <div class="usage-bar">
-    <div class="usage-dots" id="usage-dots"></div>
-    <div class="usage-text" id="usage-text"></div>
-  </div>
 
   <p class="section-label">Step 1 — Upload your photo</p>
   <div class="upload-zone" id="upload-zone" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
@@ -460,9 +455,7 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
     </div>
     <input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
   </div>
-  <p class="upload-hint">✦ Works with camera photos, screenshots and saved images · Auto-optimised before sending</p>
-  <p class="privacy-note">🔒 Your photos are analysed and not stored by JewelLens</p>
-  <p class="privacy-note" style="margin-top:4px">⚠ Metal identification is visual only — hallmark certificates confirm purity.</p>
+  <p class="upload-hint">🔒 Photos not stored &middot; Camera, WhatsApp &amp; screenshots welcome &middot; Auto-optimised</p>
 
   <div class="context-wrap">
     <p class="context-label">Tell us what you know <span class="context-optional">(optional)</span></p>
