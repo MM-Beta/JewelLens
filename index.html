@@ -1730,7 +1730,7 @@ function runFollowUp() {
     .then(function(resp) {
       var text = (resp && resp.answer) ? resp.answer : '';
       if (!text) text = 'No answer returned. Please try again.';
-      if (ansEl)  ansEl.textContent  = text;
+      if (ansEl)  ansEl.textContent  = text.replace(/\*\*/g, '');
       if (ansBox) ansBox.classList.add('visible');
       if (cpyBtn) cpyBtn.onclick = function() {
         var self = this;
