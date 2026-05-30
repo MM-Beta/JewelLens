@@ -1236,7 +1236,7 @@ async function analyzeJewellery(productType){
 
   var userCtx=(document.getElementById('piece-context').value||'').trim();
   var gatekeeper='CRITICAL FIRST CHECK — Before any analysis, look at the image carefully. If the image clearly shows a non-jewellery object — such as a handbag, clutch, wallet, clothing, shoes, food, furniture, a person\'s face, a landscape, a car, an animal, a phone, or any object that is clearly not jewellery — you MUST ignore the user\'s product type selection and return ONLY this JSON: {"not_jewellery":true,"message":"This doesn\'t appear to be a jewellery piece. JewelLens is designed for jewellery only — rings, necklaces, earrings, bracelets, bangles, pendants, brooches, anklets, nose rings, maang tikkas, and loose gemstones."}. The user may have selected a jewellery type (like bracelet) by mistake — this does not mean the image contains jewellery. A clutch bag is not a bracelet. A handbag is not jewellery. A shoe is not jewellery. Only proceed with the full analysis if the image genuinely shows a jewellery piece or loose gemstone. A jewellery piece does not need to perfectly match the selected type — a user might select bracelet for a cuff or bangle — but if the image is clearly a non-jewellery object, return the not_jewellery response without exception.\n\n';
-  var prompt=gatekeeper+'You are a world-class jewellery expert, gemologist and cultural historian with encyclopaedic knowledge of jewellery traditions from every continent and culture — including Indian regional traditions (Rajasthani Meenakari, Mughal Kundan, Polki, Jadau, Temple jewellery, Bidri, Filigree from Cuttack, Pachchikam, Thewa, Navratna), West African goldwork (Ashanti, Yoruba, Akan, Baule), Japanese metalwork (mokume-gane, shakudo, nunome, irogane), Chinese jade and silver filigree traditions (Yunnan, Miao, Dong), Middle Eastern and Ottoman goldwork, Persian enamel (minakari), Georgian and Victorian European fine jewellery, Art Nouveau and Art Deco movements, Scandinavian modernist jewellery, Latin American filigree (Colombian, Mexican Oaxacan, Peruvian), Byzantine and Greek traditions, Indigenous North American silverwork (Navajo, Zuni, Hopi), East African beadwork in metal, Ethiopian cross jewellery, Berber silver jewellery of North Africa, Yemeni and Gulf jewellery, Indonesian and Balinese goldwork, Thai nielloware, and all contemporary global design movements. You are equally expert in all traditions — no tradition is more or less important than any other. The user has selected this product type: '+productType+'.'+(userCtx?' The user has provided this additional context about the piece. Treat as unverified user belief, not established fact. If context contradicts visual evidence or hallmarks, flag the contradiction in visible_red_flags rather than deferring to it: "'+userCtx+'"':'')+' Trust this selection if the image shows any jewellery piece. Respond ONLY with valid JSON, no markdown, no backticks, raw JSON only.\n\n{"analysis_confidence":{"score":85,"reason":"Brief explanation of confidence level"},"piece_type":"specific descriptive name","metal":"specific e.g. 22-karat yellow gold or Sterling silver 925","metal_confidence":"high or medium or low","construction_method":"e.g. hand-fabricated, lost-wax cast, die-struck","construction_note":"one sentence plain-English","stones":[{"name":"Emerald","cut":"Oval Cabochon","color":"Deep Forest Green","setting":"Bezel","setting_note":"one sentence"}],"cut_performance":"For faceted stones only — visual assessment of light performance, or Not applicable","natural_vs_lab":"Honest visual assessment with uncertainty caveat","surface_treatment":"finish and any visible stone treatments","style_era":"e.g. Contemporary, Art Deco, Victorian","craftsmanship_tradition":"specific regional tradition with maximum specificity — name the exact tradition, not just the country","origin_confidence":"high or medium or low","origin_note":"one sentence","tier":"fashion or fine or luxury","resale_signal":"one factual sentence","visible_red_flags":"inconsistencies or None visible","buyer_documentation":"what to request","summary":"2-3 expert sentences","style_tags":["tag"],"styling_ideas":[{"title":"Casual Chic","occasion":"Weekend / Day Out","description":"specific suggestion"},{"title":"Office Edit","occasion":"Work / Professional","description":"suggestion"},{"title":"Evening Glam","occasion":"Dinner / Event","description":"suggestion"}],"look_for_less":{"alt_stones":["suggestion"],"alt_metals":["suggestion"],"alt_finishes":["suggestion"],"where_to_source":"global tip"},"search_terms":{"pinterest":"a specific, distinctive phrase built from the identified tradition, era, materials and motif — never generic words like gold earrings","firstdibs":"a precise resale phrase naming the house or maker if identifiable, plus era, principal stone and metal","etsy":"a precise phrase blending the tradition, technique and materials that independent makers would actually tag"},"care_tip":"one specific instruction"}';
+  var prompt=gatekeeper+'You are a world-class jewellery expert, gemologist and cultural historian with encyclopaedic knowledge of jewellery traditions from every continent and culture — including Indian regional traditions (Rajasthani Meenakari, Mughal Kundan, Polki, Jadau, Temple jewellery, Bidri, Filigree from Cuttack, Pachchikam, Thewa, Navratna), West African goldwork (Ashanti, Yoruba, Akan, Baule), Japanese metalwork (mokume-gane, shakudo, nunome, irogane), Chinese jade and silver filigree traditions (Yunnan, Miao, Dong), Middle Eastern and Ottoman goldwork, Persian enamel (minakari), Georgian and Victorian European fine jewellery, Art Nouveau and Art Deco movements, Scandinavian modernist jewellery, Latin American filigree (Colombian, Mexican Oaxacan, Peruvian), Byzantine and Greek traditions, Indigenous North American silverwork (Navajo, Zuni, Hopi), East African beadwork in metal, Ethiopian cross jewellery, Berber silver jewellery of North Africa, Yemeni and Gulf jewellery, Indonesian and Balinese goldwork, Thai nielloware, and all contemporary global design movements. You are equally expert in all traditions — no tradition is more or less important than any other. The user has selected this product type: '+productType+'.'+(userCtx?' The user has provided this additional context about the piece. Treat as unverified user belief, not established fact. If context contradicts visual evidence or hallmarks, flag the contradiction in visible_red_flags rather than deferring to it: "'+userCtx+'"':'')+' Trust this selection if the image shows any jewellery piece. Respond ONLY with valid JSON, no markdown, no backticks, raw JSON only. Never state or estimate any price, monetary value, or retail figure in any field — JewelLens never prices pieces; describe what affects value instead.\n\n{"analysis_confidence":{"score":85,"reason":"Brief explanation of confidence level"},"piece_type":"specific descriptive name","metal":"specific e.g. 22-karat yellow gold or Sterling silver 925","metal_confidence":"high or medium or low","construction_method":"e.g. hand-fabricated, lost-wax cast, die-struck","construction_note":"one sentence plain-English","stones":[{"name":"Emerald","cut":"Oval Cabochon","color":"Deep Forest Green","setting":"Bezel","setting_note":"one sentence"}],"cut_performance":"For faceted stones only — visual assessment of light performance, or Not applicable","natural_vs_lab":"Honest visual assessment with uncertainty caveat","surface_treatment":"finish and any visible stone treatments","style_era":"e.g. Contemporary, Art Deco, Victorian","craftsmanship_tradition":"specific regional tradition with maximum specificity — name the exact tradition, not just the country","origin_confidence":"high or medium or low","origin_note":"one sentence","tier":"fashion or fine or luxury","value_factors":{"drivers":"the one or two things that most drive THIS specific piece's value","demand":"current demand or liquidity for this category, one short phrase","raises":"what would raise its value","lowers":"what would lower its value"},"visible_red_flags":"inconsistencies or None visible","buyer_documentation":"what to request","summary":"2-3 expert sentences","style_tags":["up to 5 distinctive tags using era, tradition, technique or motif — never generic filler such as gold earrings or statement piece"],"styling_ideas":[{"title":"Casual Chic","occasion":"Weekend / Day Out","description":"specific suggestion"},{"title":"Office Edit","occasion":"Work / Professional","description":"suggestion"},{"title":"Evening Glam","occasion":"Dinner / Event","description":"suggestion"}],"look_for_less":{"alt_stones":["suggestion"],"alt_metals":["suggestion"],"alt_finishes":["suggestion"],"where_to_source":"global tip"},"search_terms":{"pinterest":"a specific, distinctive phrase built from the identified tradition, era, materials and motif — never generic words like gold earrings","firstdibs":"a precise resale phrase naming the house or maker if identifiable, plus era, principal stone and metal","etsy":"a precise phrase blending the tradition, technique and materials that independent makers would actually tag"},"care_tip":"one specific instruction"}';
   try{
     var imgPayload=[{type:"image",source:{type:"base64",media_type:selectedMime,data:selectedBase64}}];
     var result=await callClaude(imgPayload,prompt,3500);
@@ -1260,6 +1260,20 @@ function showNotJewellery(message){
   document.getElementById('err-display').classList.remove('hidden');
 }
 
+function jlStripPrice(t){ return (t||'').replace(/[₹$€£]\s?[\d,]+\s*([-–to]+\s*[₹$€£]?\s?[\d,]+)?\+?/g,'').replace(/\bretail(ing|s)?\b/gi,'').replace(/\s{2,}/g,' ').replace(/\s+([.,;])/g,'$1').trim(); }
+function jlValueCell(r){
+  var vf=r.value_factors;
+  if(vf&&(vf.drivers||vf.raises||vf.lowers||vf.demand)){
+    var p=[];
+    if(vf.drivers)p.push(vf.drivers);
+    if(vf.demand)p.push('<strong>Demand:</strong> '+vf.demand);
+    if(vf.raises)p.push('<strong>Raises value:</strong> '+vf.raises);
+    if(vf.lowers)p.push('<strong>Lowers value:</strong> '+vf.lowers);
+    p.push('<em style="color:var(--text3)">JewelLens won\'t guess a price — values swing too much. For a real figure, use a GIA-listed jeweller.</em>');
+    return p.join('<br>');
+  }
+  return jlStripPrice(r.resale_signal||'');
+}
 function renderResults(r){
   window.lastAnalysis = r;
 
@@ -1278,7 +1292,7 @@ if(_llp){ _llp.classList.add('hidden'); _llp.innerHTML=''; }
   var conf=r.analysis_confidence;
   if(conf&&conf.score){
     var score=Math.max(0,Math.min(100,parseInt(conf.score)||0));
-    document.getElementById('p-conf-pct').textContent=score+'%';
+    document.getElementById('p-conf-pct').textContent=(score>=80?'Strong':(score>=60?'Good':'Limited'));
     setTimeout(function(){ document.getElementById('p-conf-bar').style.width=score+'%'; },100);
     document.getElementById('p-conf-note').textContent=conf.reason||'';
     document.getElementById('p-confidence').classList.remove('hidden');
@@ -1288,17 +1302,17 @@ if(_llp){ _llp.classList.add('hidden'); _llp.innerHTML=''; }
   var rows=[
     ['Metal',(r.metal||'')+(r.metal_confidence==='low'?' (approx.)':'')],
     ['Construction',r.construction_method||''],
-    ['Stones',r.stones?r.stones.map(function(s){ return s.name+(s.cut?' · '+s.cut:''); }).join(', '):'None'],
-    ['Cut Performance',r.cut_performance||'—'],
-    ['Natural vs Lab',r.natural_vs_lab||'—'],
-    ['Surface',r.surface_treatment||''],
-    ['Style Era',r.style_era||''],
-    ['Tradition',r.craftsmanship_tradition||''],
-    ['Tier','<span class="tier-pill tier-'+(r.tier||'fashion')+'">'+(r.tier||'fashion').charAt(0).toUpperCase()+(r.tier||'fashion').slice(1)+'</span>'],
-    ['Resale Signal',r.resale_signal||'']
+    ['Stones',r.stones?r.stones.map(function(s){ return s.name+(s.cut?' · '+s.cut:''); }).join(', '):'None']
   ];
+  if(r.cut_performance && !/^\s*not applicable/i.test(r.cut_performance)) rows.push(['Cut Performance',r.cut_performance]);
+  var _treat=[r.natural_vs_lab,r.surface_treatment].filter(Boolean).join(' ');
+  if(_treat) rows.push(['Treatments & Origin',_treat+' <em style="color:var(--text3)">(visual estimate)</em>']);
+  rows.push(['Style Era',r.style_era||'']);
+  rows.push(['Tradition',r.craftsmanship_tradition||'']);
+  rows.push(['Tier','<span class="tier-pill tier-'+(r.tier||'fashion')+'">'+(r.tier||'fashion').charAt(0).toUpperCase()+(r.tier||'fashion').slice(1)+'</span>']);
+  rows.push(['What Affects Value',jlValueCell(r)]);
   document.getElementById('p-rows').innerHTML=rows.map(function(row){ return '<div class="p-row"><span class="p-label">'+row[0]+'</span><span class="p-val">'+row[1]+'</span></div>'; }).join('');
-  document.getElementById('p-tags').innerHTML=(r.style_tags||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
+  document.getElementById('p-tags').innerHTML=(r.style_tags||[]).slice(0,6).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
 
   // Red flags
   var rfEl=document.getElementById('p-redflag'), rfTxt=document.getElementById('p-redflag-text');
@@ -1393,7 +1407,7 @@ function downloadSummary(){
     '─────────────────────',
     r.summary,'',
     'Care: '+r.care_tip,'',
-    'Resale: '+r.resale_signal,'',
+    'Value: '+(r.value_factors&&r.value_factors.drivers?r.value_factors.drivers:jlStripPrice(r.resale_signal||'')),'',
     'Generated by JewelLens — jewellens.app'].join('\n');
   var blob=new Blob([text],{type:'text/plain'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
