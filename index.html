@@ -461,6 +461,8 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
 .ds-signname { font-size: 8.5px; letter-spacing: .03em; color: var(--text3); text-transform: uppercase; }
 .ds-sign.active .ds-signname { color: var(--text2); }
 </style>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="app">
@@ -481,7 +483,7 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
       <span><span class="logo-jewel">Jewel</span><span class="logo-lens">Lens</span></span>
     </div>
     <p class="hero-eyebrow">AI Jewellery Intelligence</p>
-    <h1 class="hero-headline">Every piece has a <span class="story-word">story.</span></h1>
+    <h1 class="hero-headline">Every piece has a&nbsp;<span class="story-word">story.</span></h1>
     <p class="hero-sub">Upload any jewellery photo and discover its metal, stones, style era — and exactly how to wear it.</p>
   </div>
 
@@ -713,6 +715,15 @@ body { background: var(--bg); font-family: var(--font-body); color: var(--text);
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Suggest a feature or share feedback
       </button>
+      <button class="feedback-btn" onclick="reportWrong()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 9v4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+        Report a problem with this analysis
+      </button>
+      <div id="wrong-box" class="hidden" style="margin-top:8px">
+        <textarea class="context-textarea" id="wrong-note" rows="2" maxlength="240" placeholder="What did JewelLens get wrong? e.g. metal is silver not gold &middot; wrong tradition &middot; not this stone"></textarea>
+        <button class="feedback-btn" style="margin-top:6px" onclick="submitWrong()">Send correction</button>
+        <p id="wrong-status" style="font-size:11px;color:var(--gold-dark);margin-top:6px"></p>
+      </div>
 
       <div class="spacer"></div>
       <button id="look-less-btn" class="look-less-btn hidden" onclick="toggleLookLess()">
@@ -899,6 +910,7 @@ var SAMPLE_DATA=[
 function loadSample(idx){
   var s=SAMPLE_DATA[idx];
   currentResult=s.json;
+  track('sample_viewed',{piece:s.type});
   selectedType=s.type;
   document.getElementById('prev-img').src=s.preview;
   document.getElementById('badge-cat').textContent=s.type;
@@ -922,6 +934,17 @@ function _set(k,v){ try{ if(window.localStorage) window.localStorage.setItem(k,v
 var OWNER_CODE='swaGGer#*19%OWNEr';
 var BETA_CODE='JLBETA2026';
 var FEEDBACK_EMAIL='jewellensapp@gmail.com';
+function track(name,data){ try{ window.va && window.va('event',{name:name,data:data||{}}); }catch(e){} }
+function reportWrong(){ var b=document.getElementById('wrong-box'); if(b) b.classList.toggle('hidden'); }
+function submitWrong(){
+  var t=document.getElementById('wrong-note'); var note=(t&&t.value||'').trim();
+  var piece=(typeof currentResult!=='undefined'&&currentResult&&currentResult.piece_type)||'';
+  if(!note){ var st0=document.getElementById('wrong-status'); if(st0) st0.textContent='Add a quick note first.'; return; }
+  track('wrong_reported',{piece:piece,note:note.slice(0,90)});
+  var st=document.getElementById('wrong-status');
+  if(st){ st.innerHTML='Thank you \u2014 noted. This is exactly what helps JewelLens improve. <a href="mailto:'+FEEDBACK_EMAIL+'?subject='+encodeURIComponent('JewelLens correction')+'&body='+encodeURIComponent('Piece: '+piece+'\nWhat was wrong: '+note)+'" style="color:var(--gold)">Email the details too</a>'; }
+  if(t){ t.value=''; }
+}
 var TALLY_URL='https://tally.so/r/Pdbe9x';
 
 var selectedFile=null, selectedType=null, selectedBase64=null, selectedMime=null, currentResult=null;
@@ -954,6 +977,7 @@ function toggleTheme(){
   _set('jl_theme',next); applyTheme(next);
 }
 (function(){ try{ applyTheme(_get('jl_theme')==='dark'?'dark':'light'); }catch(e){} })();
+(function(){ try{ track('app_open'); }catch(e){} })();
 
 // Detect native share capability
 var _canShare=(typeof navigator.share==='function')&&(typeof navigator.canShare==='function');
@@ -1212,7 +1236,7 @@ async function analyzeJewellery(productType){
 
   var userCtx=(document.getElementById('piece-context').value||'').trim();
   var gatekeeper='CRITICAL FIRST CHECK — Before any analysis, look at the image carefully. If the image clearly shows a non-jewellery object — such as a handbag, clutch, wallet, clothing, shoes, food, furniture, a person\'s face, a landscape, a car, an animal, a phone, or any object that is clearly not jewellery — you MUST ignore the user\'s product type selection and return ONLY this JSON: {"not_jewellery":true,"message":"This doesn\'t appear to be a jewellery piece. JewelLens is designed for jewellery only — rings, necklaces, earrings, bracelets, bangles, pendants, brooches, anklets, nose rings, maang tikkas, and loose gemstones."}. The user may have selected a jewellery type (like bracelet) by mistake — this does not mean the image contains jewellery. A clutch bag is not a bracelet. A handbag is not jewellery. A shoe is not jewellery. Only proceed with the full analysis if the image genuinely shows a jewellery piece or loose gemstone. A jewellery piece does not need to perfectly match the selected type — a user might select bracelet for a cuff or bangle — but if the image is clearly a non-jewellery object, return the not_jewellery response without exception.\n\n';
-  var prompt=gatekeeper+'You are a world-class jewellery expert, gemologist and cultural historian with encyclopaedic knowledge of jewellery traditions from every continent and culture — including Indian regional traditions (Rajasthani Meenakari, Mughal Kundan, Polki, Jadau, Temple jewellery, Bidri, Filigree from Cuttack, Pachchikam, Thewa, Navratna), West African goldwork (Ashanti, Yoruba, Akan, Baule), Japanese metalwork (mokume-gane, shakudo, nunome, irogane), Chinese jade and silver filigree traditions (Yunnan, Miao, Dong), Middle Eastern and Ottoman goldwork, Persian enamel (minakari), Georgian and Victorian European fine jewellery, Art Nouveau and Art Deco movements, Scandinavian modernist jewellery, Latin American filigree (Colombian, Mexican Oaxacan, Peruvian), Byzantine and Greek traditions, Indigenous North American silverwork (Navajo, Zuni, Hopi), East African beadwork in metal, Ethiopian cross jewellery, Berber silver jewellery of North Africa, Yemeni and Gulf jewellery, Indonesian and Balinese goldwork, Thai nielloware, and all contemporary global design movements. You are equally expert in all traditions — no tradition is more or less important than any other. The user has selected this product type: '+productType+'.'+(userCtx?' The user has provided this additional context about the piece. Treat as unverified user belief, not established fact. If context contradicts visual evidence or hallmarks, flag the contradiction in visible_red_flags rather than deferring to it: "'+userCtx+'"':'')+' Trust this selection if the image shows any jewellery piece. Respond ONLY with valid JSON, no markdown, no backticks, raw JSON only.\n\n{"analysis_confidence":{"score":85,"reason":"Brief explanation of confidence level"},"piece_type":"specific descriptive name","metal":"specific e.g. 22-karat yellow gold or Sterling silver 925","metal_confidence":"high or medium or low","construction_method":"e.g. hand-fabricated, lost-wax cast, die-struck","construction_note":"one sentence plain-English","stones":[{"name":"Emerald","cut":"Oval Cabochon","color":"Deep Forest Green","setting":"Bezel","setting_note":"one sentence"}],"cut_performance":"For faceted stones only — visual assessment of light performance, or Not applicable","natural_vs_lab":"Honest visual assessment with uncertainty caveat","surface_treatment":"finish and any visible stone treatments","style_era":"e.g. Contemporary, Art Deco, Victorian","craftsmanship_tradition":"specific regional tradition with maximum specificity — name the exact tradition, not just the country","origin_confidence":"high or medium or low","origin_note":"one sentence","tier":"fashion or fine or luxury","resale_signal":"one factual sentence","visible_red_flags":"inconsistencies or None visible","buyer_documentation":"what to request","summary":"2-3 expert sentences","style_tags":["tag"],"styling_ideas":[{"title":"Casual Chic","occasion":"Weekend / Day Out","description":"specific suggestion"},{"title":"Office Edit","occasion":"Work / Professional","description":"suggestion"},{"title":"Evening Glam","occasion":"Dinner / Event","description":"suggestion"}],"look_for_less":{"alt_stones":["suggestion"],"alt_metals":["suggestion"],"alt_finishes":["suggestion"],"where_to_source":"global tip"},"search_terms":{"pinterest":"search string","firstdibs":"search string","etsy":"search string"},"care_tip":"one specific instruction"}';
+  var prompt=gatekeeper+'You are a world-class jewellery expert, gemologist and cultural historian with encyclopaedic knowledge of jewellery traditions from every continent and culture — including Indian regional traditions (Rajasthani Meenakari, Mughal Kundan, Polki, Jadau, Temple jewellery, Bidri, Filigree from Cuttack, Pachchikam, Thewa, Navratna), West African goldwork (Ashanti, Yoruba, Akan, Baule), Japanese metalwork (mokume-gane, shakudo, nunome, irogane), Chinese jade and silver filigree traditions (Yunnan, Miao, Dong), Middle Eastern and Ottoman goldwork, Persian enamel (minakari), Georgian and Victorian European fine jewellery, Art Nouveau and Art Deco movements, Scandinavian modernist jewellery, Latin American filigree (Colombian, Mexican Oaxacan, Peruvian), Byzantine and Greek traditions, Indigenous North American silverwork (Navajo, Zuni, Hopi), East African beadwork in metal, Ethiopian cross jewellery, Berber silver jewellery of North Africa, Yemeni and Gulf jewellery, Indonesian and Balinese goldwork, Thai nielloware, and all contemporary global design movements. You are equally expert in all traditions — no tradition is more or less important than any other. The user has selected this product type: '+productType+'.'+(userCtx?' The user has provided this additional context about the piece. Treat as unverified user belief, not established fact. If context contradicts visual evidence or hallmarks, flag the contradiction in visible_red_flags rather than deferring to it: "'+userCtx+'"':'')+' Trust this selection if the image shows any jewellery piece. Respond ONLY with valid JSON, no markdown, no backticks, raw JSON only.\n\n{"analysis_confidence":{"score":85,"reason":"Brief explanation of confidence level"},"piece_type":"specific descriptive name","metal":"specific e.g. 22-karat yellow gold or Sterling silver 925","metal_confidence":"high or medium or low","construction_method":"e.g. hand-fabricated, lost-wax cast, die-struck","construction_note":"one sentence plain-English","stones":[{"name":"Emerald","cut":"Oval Cabochon","color":"Deep Forest Green","setting":"Bezel","setting_note":"one sentence"}],"cut_performance":"For faceted stones only — visual assessment of light performance, or Not applicable","natural_vs_lab":"Honest visual assessment with uncertainty caveat","surface_treatment":"finish and any visible stone treatments","style_era":"e.g. Contemporary, Art Deco, Victorian","craftsmanship_tradition":"specific regional tradition with maximum specificity — name the exact tradition, not just the country","origin_confidence":"high or medium or low","origin_note":"one sentence","tier":"fashion or fine or luxury","resale_signal":"one factual sentence","visible_red_flags":"inconsistencies or None visible","buyer_documentation":"what to request","summary":"2-3 expert sentences","style_tags":["tag"],"styling_ideas":[{"title":"Casual Chic","occasion":"Weekend / Day Out","description":"specific suggestion"},{"title":"Office Edit","occasion":"Work / Professional","description":"suggestion"},{"title":"Evening Glam","occasion":"Dinner / Event","description":"suggestion"}],"look_for_less":{"alt_stones":["suggestion"],"alt_metals":["suggestion"],"alt_finishes":["suggestion"],"where_to_source":"global tip"},"search_terms":{"pinterest":"a specific, distinctive phrase built from the identified tradition, era, materials and motif — never generic words like gold earrings","firstdibs":"a precise resale phrase naming the house or maker if identifiable, plus era, principal stone and metal","etsy":"a precise phrase blending the tradition, technique and materials that independent makers would actually tag"},"care_tip":"one specific instruction"}';
   try{
     var imgPayload=[{type:"image",source:{type:"base64",media_type:selectedMime,data:selectedBase64}}];
     var result=await callClaude(imgPayload,prompt,3500);
